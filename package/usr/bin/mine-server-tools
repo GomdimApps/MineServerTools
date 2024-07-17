@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Ferramentas essenciais para manter um servidor Minecraft Bedrock sempre ativo.
+# Este pacote fornece uma coleção de ferramentas e scripts necessários para garantir
+# que um servidor Minecraft Bedrock e Java Edition esteja sempre ativo e funcionando de forma estável.
+# Inclui suporte para reinicialização automática, backups regulares, e monitoramento
+# de desempenho.
+#
+# Desenvolvido por Isac Gondim e Pedro Felipe
+# Todos os direitos autorais reservados.
+# LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/ 
+
+show_menu() {
+    dialog --clear --title "Menu" \
+    --menu "Escolha uma opção:" 15 50 4 \
+    1 "Backup" \
+    2 "Update" \
+    2>&1 >/dev/tty
+}
+
+backup() {
+    dialog --msgbox "Iniciando o backup..." 10 30
+}
+
+update() {
+    dialog --msgbox "Iniciando a atualização..." 10 30
+}
+
+choice=$(show_menu)
+
+case $choice in
+    1)
+        backup
+        ;;
+    2)
+        update
+        ;;
+    *)
+        dialog --msgbox "Opção inválida!" 10 30
+        ;;
+esac
+
+clear

@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Ferramentas essenciais para manter um servidor Minecraft Bedrock sempre ativo.
+# Este pacote fornece uma coleção de ferramentas e scripts necessários para garantir
+# que um servidor Minecraft Bedrock esteja sempre ativo e funcionando de forma estável.
+# Inclui suporte para reinicialização automática, backups regulares, e monitoramento
+# de desempenho.
+#
+# Desenvolvido por Isac Gondim.
+# Todos os direitos autorais reservados.
+# LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/
+#
+# Utilização:
+# 1. Configure as variáveis de ambiente conforme necessário.
+# 2. Execute este script para iniciar o servidor Minecraft Bedrock e as ferramentas associadas.
+
+config_file="/opt/mineservertools/bedrock-server.conf"
+
+backup() {
+    origem=$(grep "^server-dir=" $config_file | cut -d'=' -f2 | tr -d '"')
+    destino=$(grep "^backup-dir=" $config_file | cut -d'=' -f2 | tr -d '"')
+
+    data_hora=$(date +"%Y-%m-%d_%H-%M-%S")
+    nome_arquivo="server-data-$data_hora.zip"
+
+    cd /
+    cd $destino
+    find . -maxdepth 1 -type f -ctime +0.75 -exec rm -f {} +
+
+    if [ $? -eq 0 ]; then
+        echo "Arquivos antigos apagados"
+    else
+        echo "Erro ao apagar arquivos antigos"
+    fi
+
+    cd /
+    cd $destino
+    zip -r $destino/$nome_arquivo $origem/ 
+
+    if [ $? -eq 0 ]; then
+        echo "Backup concluído com sucesso: $nome_arquivo"
+    else
+        echo "Erro ao fazer o backup."
+    fi
+}
+
+schedule_tasks() {
+    echo "Agendando tarefas automáticas..."
+    (crontab -l ; echo "0 3 * * * /usr/bin/bedrock-tools/tools/backup-server backup") | crontab -
+    echo "Tarefas agendadas."
+}
+
+case "$1" in
+    backup)
+        backup
+        ;;
+    schedule)
+        schedule_tasks
+        ;;
+    *)
+        echo "Uso: $0 {backup|schedule}"
+        exit 1
+        ;;
+esac
+
+exit 0
