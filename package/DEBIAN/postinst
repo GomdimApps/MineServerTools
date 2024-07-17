@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
 
 groupadd -f minetools
-# Correção de permissões da pasta /opt/backup-server-bedrock
-chgrp -R minetools /opt/backup-server-bedrock /opt/backup-server-java/
 
-# Criação do arquivo de log
+chgrp -R minetools /opt/backup-server-bedrock/ /opt/backup-server-java/
+
 chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log
 chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log
 chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-server
 
-#exit 0
+add_path_to_bashrc() {
+    local user_home=$1
+    local bashrc_path="$user_home/.bashrc"
+    local path_entry="export PATH=\$PATH:/usr/bin/bedrock-tools/tools"
+
+    if ! grep -q "$path_entry" "$bashrc_path"; then
+        echo -e "\n# PATH do MineServerTools " >> "$bashrc_path"
+        echo "$path_entry" >> "$bashrc_path"
+    fi
+}
+
+for user_home in /home/*; do
+    if [ -d "$user_home" ]; then
+        add_path_to_bashrc "$user_home"
+    fi
+done
+
+add_path_to_bashrc "/root"
 
 exit 0
