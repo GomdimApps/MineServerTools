@@ -4,27 +4,33 @@ groupadd -f minetools
 
 chgrp -R minetools /opt/backup-server-bedrock/ /opt/backup-server-java/
 
-chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log
-chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log
+chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log /var/log/java-server.log
+chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
+chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
 chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-server
 
-add_path_to_bashrc() {
+add_paths_to_bashrc() {
     local user_home=$1
     local bashrc_path="$user_home/.bashrc"
-    local path_entry="export PATH=\$PATH:/usr/bin/bedrock-tools/tools"
+    local path_entry_bedrock="export PATH=\$PATH:/usr/bin/bedrock-tools/tools"
+    local path_entry_java="export PATH=\$PATH:/usr/bin/java-tools"
 
-    if ! grep -q "$path_entry" "$bashrc_path"; then
-        echo -e "\n# PATH do MineServerTools " >> "$bashrc_path"
-        echo "$path_entry" >> "$bashrc_path"
+    if ! grep -q "$path_entry_bedrock" "$bashrc_path"; then
+        echo -e "\n# PATH do MineServerTools" >> "$bashrc_path"
+        echo "$path_entry_bedrock" >> "$bashrc_path"
+    fi
+
+    if ! grep -q "$path_entry_java" "$bashrc_path"; then
+        echo "$path_entry_java" >> "$bashrc_path"
     fi
 }
 
 for user_home in /home/*; do
     if [ -d "$user_home" ]; then
-        add_path_to_bashrc "$user_home"
+        add_paths_to_bashrc "$user_home"
     fi
 done
 
-add_path_to_bashrc "/root"
+add_paths_to_bashrc "/root"
 
 exit 0
