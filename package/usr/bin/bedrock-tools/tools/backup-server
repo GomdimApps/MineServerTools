@@ -13,35 +13,44 @@
 config_file="/etc/mineservertools/bedrock-server.conf"
 log_file="/var/log/bedrock-backup.log"
 
+cleanup() {
+    rm -f "$temp_tar"
+}
+
 backup() {
     local origem=$(grep "^server-dir=" "$config_file" | cut -d'=' -f2 | tr -d '"')
     local destino=$(grep "^backup-dir=" "$config_file" | cut -d'=' -f2 | tr -d '"')
 
+    if [ ! -d "$origem" ]; then
+        echo "[$(date)] Diretório de origem não encontrado: $origem" >> "$log_file"
+        exit 1
+    fi
+
     local data_hora=$(date +"%Y-%m-%d_%H-%M-%S")
-    local nome_arquivo="server-data-$data_hora.zip"
+    local nome_arquivo="server-mine-bedrock-$data_hora.tar.zst"
+    local temp_tar="/tmp/server-mine-bedrock-temp.tar.zst"
+
+    trap cleanup EXIT
 
     cd "$destino" || { echo "[$(date)] Erro ao acessar o diretório de destino." >> "$log_file"; exit 1; }
 
-    find . -maxdepth 1 -type f -ctime +1 -exec rm -f {} +
-
-    if [ $? -eq 0 ]; then
-        echo "[$(date)] Arquivos antigos apagados" >> "$log_file"
-    else
-        echo "[$(date)] Erro ao apagar arquivos antigos" >> "$log_file"
+    if ls *.tar.zst 1> /dev/null 2>&1; then
+        arquivos_backup=$(ls -t *.tar.zst 2>/dev/null)
+        if [ -n "$arquivos_backup" ]; then
+            echo "$arquivos_backup" | head -n -5 | xargs -r rm -f
+        fi
     fi
 
     echo "Iniciando backup..."
 
-    local temp_zip="/tmp/server-data-temp.zip"
-    zip -r "$temp_zip" "$origem/" > /dev/null
+    tar --use-compress-program=zstd -cf "$temp_tar" -C "$origem" .
 
-    local tamanho_zip=$(du -b "$temp_zip" | awk '{print $1}')
+    local tamanho_tar=$(du -b "$temp_tar" | awk '{print $1}')
 
-    pv -s "$tamanho_zip" "$temp_zip" > "$destino/$nome_arquivo"
+    pv -s "$tamanho_tar" "$temp_tar" > "$destino/$nome_arquivo"
 
     if [ $? -eq 0 ]; then
         echo "[$(date)] Backup concluído com sucesso: $nome_arquivo" >> "$log_file"
-        rm "$temp_zip"
     else
         echo "[$(date)] Erro ao fazer o backup." >> "$log_file"
     fi
@@ -49,19 +58,19 @@ backup() {
 
 schedule_tasks() {
     echo "Agendando tarefas automáticas..."
-    (crontab -l ; echo "0 3 * * * /usr/bin/bedrock-tools/tools/backup-server backup") | crontab -
+    (crontab -l ; echo "0 3 * * * /usr/bin/bedrock-tools/tools/backup-server --backup") | crontab -
     echo "[$(date)] Tarefas agendadas." >> "$log_file"
 }
 
 case "$1" in
-    backup)
+    --backup)
         backup
         ;;
     schedule)
         schedule_tasks
         ;;
     *)
-        echo "Uso: $0 {backup|schedule}"
+        echo "Uso: $0 {--backup|schedule}"
         exit 1
         ;;
 esac
