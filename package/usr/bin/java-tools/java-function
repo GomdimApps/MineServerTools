@@ -64,16 +64,26 @@ config-server () {
 
 # Função para criar a sessão no tmux para manter o servidor ativo
 tmux-create () {
-    log "Criando uma nova sessão no tmux............"
-    tmux new -s $TMUX_NAME
-    log "Nova sessão criada com sucesso............"
+    log "INFO" "Verificando se a sessão do tmux $TMUX_NAME já existe............"
+    if tmux-if; then
+        log "INFO" "A sessão $TMUX_NAME já existe. Não é necessário criar uma nova sessão."
+    else
+        log "INFO" "Criando uma nova sessão no tmux............"
+        tmux new -d -s $TMUX_NAME
+        log "INFO" "Nova sessão criada com sucesso............"
+    fi
 }
 
 # Função para destruir a sessão do tmux quando o servidor for desligado
 tmux-destroy () {
-    log "Destruindo a sessão do tmux............"
-    tmux kill-session -t $TMUX_NAME
-    log "Sessão destruída com sucesso............"
+    log "INFO" "Verificando se a sessão do tmux $TMUX_NAME existe............"
+    if tmux-if; then
+        log "INFO" "Destruindo a sessão do tmux............"
+        tmux kill-session -t $TMUX_NAME
+        log "INFO" "Sessão destruída com sucesso............"
+    else
+        log "INFO" "A sessão $TMUX_NAME não existe. Nada a ser destruído."
+    fi
 }
 
 # Função para verificar se a sessão do tmux existe
@@ -87,8 +97,14 @@ tmux-if () {
 
 # Função para registrar todos os logs
 log () {
-    local message="$1"
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" >> $LOG_FILE
+    local level="$1"
+    local message="$2"
+    local datetime
+    datetime=$(date '+%D-%m-%Y %H:%M:%S')
+    echo "$datetime - [$level] $message" >> "$LOG_FILE"
+    # Também imprimir no console para feedback imediato
+    echo "$datetime - [$level] $message"
 }
+
 
 ##### Fim das funções diretamente ligadas ao Servidor Linux #####
