@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# Ferramentas essenciais para manter um servidor Minecraft Bedrock sempre ativo.
+# Este pacote fornece uma coleção de ferramentas e scripts necessários para garantir
+# que um servidor Minecraft Bedrock esteja sempre ativo e funcionando de forma estável.
+# Inclui suporte para reinicialização automática, backups regulares, e monitoramento
+# de desempenho.
+#
+# Desenvolvido por Isac Gondim.
+# Todos os direitos autorais reservados.
+# LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/
+
+config_file="/etc/mineservertools/bedrock-server.conf"
+log_file="/var/log/bedrock-backup.log"
+dir_backup="/opt/backup-server-bedrock/"
+
+cleanup() {
+    rm -f "$temp_tar"
+}
+
+backup() {
+    local origem=$(grep "^server-dir=" "$config_file" | cut -d'=' -f2 | tr -d '"')
+
+    if [ ! -d "$origem" ]; then
+        echo "[$(date)] Diretório de origem não encontrado: $origem" >> "$log_file"
+        exit 1
+    fi
+
+    local data_hora=$(date +"%Y-%m-%d_%H-%M-%S")
+    local nome_arquivo="server-mine-bedrock-$data_hora.tar.zst"
+    local temp_tar="/tmp/server-mine-bedrock-temp.tar.zst"
+
+    trap cleanup EXIT
+
+    cd "$dir_backup" || { echo "[$(date)] Erro ao acessar o diretório de dir_backup." >> "$log_file"; exit 1; }
+
+    if ls *.tar.zst 1> /dev/null 2>&1; then
+        arquivos_backup=$(ls -t *.tar.zst 2>/dev/null)
+        if [ -n "$arquivos_backup" ]; then
+            echo "$arquivos_backup" | head -n -5 | xargs -r rm -f
+        fi
+    fi
+
+    echo "Iniciando backup..."
+
+    tar --use-compress-program=zstd -cf "$temp_tar" -C "$origem" .
+
+    local tamanho_tar=$(du -b "$temp_tar" | awk '{print $1}')
+
+    pv -s "$tamanho_tar" "$temp_tar" > "$dir_backup/$nome_arquivo"
+
+    if [ $? -eq 0 ]; then
+        echo "[$(date)] Backup concluído com sucesso: $nome_arquivo" >> "$log_file"
+    else
+        echo "[$(date)] Erro ao fazer o backup." >> "$log_file"
+    fi
+}
+
+schedule_tasks() {
+    echo "Agendando tarefas automáticas..."
+    (crontab -l ; echo "0 3 * * * /usr/bin/bedrock-tools/tools/backup-server --backup") | crontab -
+    echo "[$(date)] Tarefas agendadas." >> "$log_file"
+}
+
+view_backup() {
+ cd "$dir_backup" || { echo "[$(date)] Erro ao acessar os backups" >> "$log_file"; exit 1; }
+find $ -type f -name "*.tar.zst" -exec stat --format="%W %s %i %n" {} + | sort -nr | awk '
+BEGIN {
+    # Define a cor verde clara para destaque
+    LIGHT_GREEN="\033[1;32m"
+    RESET_COLOR="\033[0m"
+}
+{
+    size=$2
+    if (size >= 1024*1024*1024) {
+        size=size/(1024*1024*1024)
+        size_str=sprintf("%.2f GB", size)
+    } else if (size >= 1024*1024) {
+        size=size/(1024*1024)
+        size_str=sprintf("%.2f MB", size)
+    } else {
+        size=size/1024
+        size_str=sprintf("%.2f KB", size)
+    }
+    # Extrai o nome do arquivo sem o caminho
+    split($4, parts, "/")
+    file_name=parts[length(parts)]
+    
+    # Adiciona [Mais Recente] aos dois arquivos mais recentes
+    if (NR==1) {
+        printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+    } else if (NR==2) {
+        printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+    } else {
+        printf "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s\n", $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+    }
+}'
+}
+
+case "$1" in
+    --backup)
+        backup
+        ;;
+    --schedule)
+        schedule_tasks
+        ;;
+    --view)
+        view_backup
+        ;;
+    *)
+        echo "Uso: $0 {--backup|schedule}"
+        exit 1
+        ;;
+esac
+
+exit 0
