@@ -7,7 +7,7 @@ chgrp -R minetools /opt/backup-server-bedrock/ /opt/backup-server-java/
 chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log /var/log/java-server.log
 chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
 chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
-chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-server
+chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-bedrock
 
 add_paths_to_bashrc() {
     local user_home=$1
