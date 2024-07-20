@@ -2,7 +2,8 @@
 
 groupadd -f minetools
 
-chgrp -R minetools /opt/backup-server-bedrock/ /opt/backup-server-java/
+# Permissões das pasta de Backups
+chgrp -R minetools /var/mine-backups/backup-server-bedrock/ /var/mine-backups/backup-server-java/
 
 chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log /var/log/java-server.log
 chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
