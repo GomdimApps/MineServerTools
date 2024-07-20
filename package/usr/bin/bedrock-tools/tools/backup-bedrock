@@ -12,7 +12,7 @@
 
 config_file="/etc/mineservertools/bedrock-server.conf"
 log_file="/var/log/bedrock-backup.log"
-dir_backup="/opt/backup-server-bedrock/"
+dir_backup="/var/mine-backups/backup-server-bedrock/"
 
 cleanup() {
     rm -f "$temp_tar"
