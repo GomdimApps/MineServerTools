@@ -9,15 +9,15 @@ Aqui está o texto corrigido:
 - Para instalar o `make` no seu Debian, execute o seguinte comando caso não esteja instalado:
 
   ```bash
-  apt install build-essential -y
+  sudo apt install build-essential -y
   ```
-
+## Gerar versão
 - Usar o git tag gera uma versão
 
   ```bash
   git tag v1.0.0
   ```
-
+## Compilar o pacote DEBIAN
 - Para compilar o projeto, use o comando:
 
   ```bash
@@ -37,7 +37,7 @@ Aqui está o texto corrigido:
 - Para instalar este pacote Deb, você pode usar o comando abaixo como no exemplo:
 
   ```bash
-  dpkg -i MineServerTools_1.1.1_all.deb
+  sudo dpkg -i MineServerTools_1.1.1_all.deb
   ```
 
 # Desinstalação do pacote
@@ -45,7 +45,7 @@ Aqui está o texto corrigido:
 - Para desinstalar o pacote, use o comando:
 
   ```bash
-  apt purge mineservertools -y
+  sudo apt purge mineservertools -y
   ```
 
 # Configuração da aplicação
