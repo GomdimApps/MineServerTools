@@ -1,6 +1,10 @@
 PACKAGE_NAME := MineServerTools
 SHELL := /bin/bash
 
+.PHONY: build
+build:
+	go build -o package/usr/bin/bedrock-tools/tools/download-server binary/download-bedrock.go
+
 .PHONY: installer
 installer:
 	mkdir -p dist
@@ -9,6 +13,11 @@ installer:
 	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control
 	dpkg-deb --build package/ dist/$(PACKAGE_NAME)_$(CURRENT_VERSION_MICRO)_all.deb
 	#rm -r dist/deb
+
+.PHONY: clean
+clean:
+	rm -f package/usr/bin/download-server
+	rm -f package/usr/bin/process-data
 
 ## Gerenciamento de versões
 

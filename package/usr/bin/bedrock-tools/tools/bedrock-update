@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SERVER_URL="https://minecraft.azureedge.net/bin-linux/bedrock-server-1.21.3.01.zip"
+TMP_DIR="/tmp"
+ZIP_FILE="${TMP_DIR}/bedrock_server.zip"
+DEST_DIR="/opt/update"
+
+echo "Baixando o Server Bedrock"
+/usr/bin/bedrock-tools/tools/download-server "${SERVER_URL}"
+
+if [ ! -f "${ZIP_FILE}" ]; then
+  echo "Download falhou"
+  exit 1
+fi
+
+echo "Download completo"
+
+mkdir -p "${DEST_DIR}"
+
+echo "Descompactando os ficheiros do servidor em ${DEST_DIR}..."
+unzip -o "${ZIP_FILE}" -d "${DEST_DIR}"
+
+if [ $? -ne 0 ]; then
+  echo "Unzip falhou."
+  exit 1
+fi
+
+echo "finalizou"
