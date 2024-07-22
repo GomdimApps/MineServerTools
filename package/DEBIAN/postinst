@@ -50,5 +50,6 @@ add_paths_to_bashrc "/root"
 check_and_install
 echo "Configuração finalizada."
 clear
+echo "Instalação do Mineservertools finalizada"
 
 exit 0
