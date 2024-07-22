@@ -10,60 +10,55 @@
 # Todos os direitos autorais reservados.
 # LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/
 
-config_file="/etc/mineservertools/bedrock-server.conf"
-log_file="/var/log/bedrock-backup.log"
-dir_backup="/opt/backup-server-bedrock/"
-
-cleanup() {
-    rm -f "$temp_tar"
-}
+CONFIG_FILE="/etc/mineservertools/bedrock-server.conf"
+LOG_TASK="/var/log/bedrock-backup.log"
+DIR_BACKUP="/var/mine-backups/backup-server-bedrock/"
 
 backup() {
-    local origem=$(grep "^server-dir=" "$config_file" | cut -d'=' -f2 | tr -d '"')
+    SERVER_DIR=$(grep '^server-dir=' "$CONFIG_FILE" | cut -d '=' -f2 | tr -d '"')
 
-    if [ ! -d "$origem" ]; then
-        echo "[$(date)] Diretório de origem não encontrado: $origem" >> "$log_file"
+    if [ ! -d "$SERVER_DIR" ]; then
+        echo "[$(date)] Diretório não encontrado: $SERVER_DIR" >> "$LOG_TASK"
         exit 1
     fi
 
-    local data_hora=$(date +"%Y-%m-%d_%H-%M-%S")
-    local nome_arquivo="server-mine-bedrock-$data_hora.tar.zst"
-    local temp_tar="/tmp/server-mine-bedrock-temp.tar.zst"
+    DATE_FILE=$(date +"%Y-%m-%d_%H-%M-%S")
+    FILE_NAME="server-mine-bedrock-$DATE_FILE.tar.zst"
+    TEMP_TAR="/tmp/server-mine-bedrock-temp.tar.zst"
 
-    trap cleanup EXIT
-
-    cd "$dir_backup" || { echo "[$(date)] Erro ao acessar o diretório de dir_backup." >> "$log_file"; exit 1; }
+    cd "$DIR_BACKUP" || { echo "[$(date)] Erro ao acessar o diretório de DIR_BACKUP." >> "$LOG_TASK"; exit 1; }
 
     if ls *.tar.zst 1> /dev/null 2>&1; then
-        arquivos_backup=$(ls -t *.tar.zst 2>/dev/null)
-        if [ -n "$arquivos_backup" ]; then
-            echo "$arquivos_backup" | head -n -5 | xargs -r rm -f
+        BACKUPS_FILE=$(ls -t *.tar.zst 2>/dev/null)
+        if [ -n "$BACKUPS_FILE" ]; then
+            echo "$BACKUPS_FILE" | head -n -5 | xargs -r rm -f
         fi
     fi
 
     echo "Iniciando backup..."
 
-    tar --use-compress-program=zstd -cf "$temp_tar" -C "$origem" .
+    tar --use-compress-program=zstd -cf "$TEMP_TAR" -C "$SERVER_DIR" .
 
-    local tamanho_tar=$(du -b "$temp_tar" | awk '{print $1}')
+    SIZE_TAR=$(du -b "$TEMP_TAR" | awk '{print $1}')
 
-    pv -s "$tamanho_tar" "$temp_tar" > "$dir_backup/$nome_arquivo"
+    pv -s "$SIZE_TAR" "$TEMP_TAR" > "$DIR_BACKUP/$FILE_NAME"
 
     if [ $? -eq 0 ]; then
-        echo "[$(date)] Backup concluído com sucesso: $nome_arquivo" >> "$log_file"
+         rm -r "$TEMP_TAR"
+        echo "[$(date)] Backup concluído com sucesso: $FILE_NAME" >> "$LOG_TASK"
     else
-        echo "[$(date)] Erro ao fazer o backup." >> "$log_file"
+        echo "[$(date)] Erro ao fazer o backup." >> "$LOG_TASK"
     fi
 }
 
 schedule_tasks() {
     echo "Agendando tarefas automáticas..."
     (crontab -l ; echo "0 3 * * * /usr/bin/bedrock-tools/tools/backup-server --backup") | crontab -
-    echo "[$(date)] Tarefas agendadas." >> "$log_file"
+    echo "[$(date)] Tarefas agendadas." >> "$LOG_TASK"
 }
 
 view_backup() {
- cd "$dir_backup" || { echo "[$(date)] Erro ao acessar os backups" >> "$log_file"; exit 1; }
+cd "$DIR_BACKUP" || { echo "[$(date)] Erro ao acessar os backups" >> "$LOG_TASK"; exit 1; }
 find $ -type f -name "*.tar.zst" -exec stat --format="%W %s %i %n" {} + | sort -nr | awk '
 BEGIN {
     # Define a cor verde clara para destaque
@@ -108,7 +103,7 @@ case "$1" in
         view_backup
         ;;
     *)
-        echo "Uso: $0 {--backup|schedule}"
+        echo "Uso: $0 [--backup|--schedule|--view]"
         exit 1
         ;;
 esac
