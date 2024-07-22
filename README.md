@@ -1,6 +1,3 @@
-Aqui está o texto corrigido:
-
----
 
 # Compilação do projeto
 
