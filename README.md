@@ -18,15 +18,7 @@
 - Para compilar o projeto, use o comando:
 
   ```bash
-  make installer
-  ```
-
-# Dependências necessárias
-
-- A aplicação necessita de algumas ferramentas para funcionar corretamente, use este comando:
-
-  ```bash
-  sudo apt install tar wget rsync tmux pv zstd -y
+  make package-deb
   ```
 
 # Instalação do pacote no Debian/Ubuntu
