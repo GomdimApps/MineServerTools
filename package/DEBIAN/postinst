@@ -10,10 +10,11 @@ chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/ja
 chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
 chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-bedrock /usr/bin/bedrock-tools/tools/bedrock-update /usr/bin/bedrock-tools/tools/download-server
 
-dependencies=(tar wget rsync tmux pv zstd)
+dependencies=(tar wget rsync tmux pv zstd unzip)
 
 check_and_install() {
     echo "Verificando dependências..."
+    sudo apt update
     for dep in "${dependencies[@]}"; do
         if ! dpkg -l | grep -q "$dep"; then
             echo "$dep não está instalado. Instalando..."
@@ -22,6 +23,7 @@ check_and_install() {
             echo "$dep já está instalado."
         fi
     done
+    echo "Todas as dependências foram instaladas..."
 }
 
 add_paths_to_bashrc() {
