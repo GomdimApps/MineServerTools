@@ -29,9 +29,9 @@ backup() {
     cd "$DIR_BACKUP" || { echo "[$(date)] Erro ao acessar o diretório de DIR_BACKUP." >> "$LOG_TASK"; exit 1; }
 
     if ls *.tar.zst 1> /dev/null 2>&1; then
-        BACKUPS_FILE=$(ls -t *.tar.zst 2>/dev/null)
+        BACKUPS_FILE=$(ls -t *.tar.zst 2>/dev/null | tail -n +6)
         if [ -n "$BACKUPS_FILE" ]; then
-            echo "$BACKUPS_FILE" | head -n -5 | xargs -r rm -f
+            echo "$BACKUPS_FILE" | xargs -r rm -f
         fi
     fi
 
@@ -44,7 +44,7 @@ backup() {
     pv -s "$SIZE_TAR" "$TEMP_TAR" > "$DIR_BACKUP/$FILE_NAME"
 
     if [ $? -eq 0 ]; then
-         rm -r "$TEMP_TAR"
+        rm -r "$TEMP_TAR"
         echo "[$(date)] Backup concluído com sucesso: $FILE_NAME" >> "$LOG_TASK"
     else
         echo "[$(date)] Erro ao fazer o backup." >> "$LOG_TASK"
@@ -58,38 +58,38 @@ schedule_tasks() {
 }
 
 view_backup() {
-cd "$DIR_BACKUP" || { echo "[$(date)] Erro ao acessar os backups" >> "$LOG_TASK"; exit 1; }
-find $ -type f -name "*.tar.zst" -exec stat --format="%W %s %i %n" {} + | sort -nr | awk '
-BEGIN {
-    # Define a cor verde clara para destaque
-    LIGHT_GREEN="\033[1;32m"
-    RESET_COLOR="\033[0m"
-}
-{
-    size=$2
-    if (size >= 1024*1024*1024) {
-        size=size/(1024*1024*1024)
-        size_str=sprintf("%.2f GB", size)
-    } else if (size >= 1024*1024) {
-        size=size/(1024*1024)
-        size_str=sprintf("%.2f MB", size)
-    } else {
-        size=size/1024
-        size_str=sprintf("%.2f KB", size)
+    cd "$DIR_BACKUP" || { echo "[$(date)] Erro ao acessar os backups" >> "$LOG_TASK"; exit 1; }
+    find . -type f -name "*.tar.zst" -exec stat --format="%W %s %i %n" {} + | sort -nr | awk '
+    BEGIN {
+        # Define a cor verde clara para destaque
+        LIGHT_GREEN="\033[1;32m"
+        RESET_COLOR="\033[0m"
     }
-    # Extrai o nome do arquivo sem o caminho
-    split($4, parts, "/")
-    file_name=parts[length(parts)]
-    
-    # Adiciona [Mais Recente] aos dois arquivos mais recentes
-    if (NR==1) {
-        printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
-    } else if (NR==2) {
-        printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
-    } else {
-        printf "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s\n", $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
-    }
-}'
+    {
+        size=$2
+        if (size >= 1024*1024*1024) {
+            size=size/(1024*1024*1024)
+            size_str=sprintf("%.2f GB", size)
+        } else if (size >= 1024*1024) {
+            size=size/(1024*1024)
+            size_str=sprintf("%.2f MB", size)
+        } else {
+            size=size/1024
+            size_str=sprintf("%.2f KB", size)
+        }
+        # Extrai o nome do arquivo sem o caminho
+        split($4, parts, "/")
+        file_name=parts[length(parts)]
+        
+        # Adiciona [Mais Recente] aos dois arquivos mais recentes
+        if (NR==1) {
+            printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+        } else if (NR==2) {
+            printf LIGHT_GREEN "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s [Mais Recente]\n" RESET_COLOR, $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+        } else {
+            printf "ID: %-10s Tamanho: %-10s Nome: %-40s Data de Criação: %s\n", $3, size_str, file_name, strftime("%Y-%m-%d %H:%M:%S", $1)
+        }
+    }'
 }
 
 case "$1" in
