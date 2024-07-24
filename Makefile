@@ -1,14 +1,21 @@
 PACKAGE_NAME := MineServerTools
 SHELL := /bin/bash
 
-.PHONY: installer
-installer:
+.PHONY: package-deb
+package-deb:
+	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
+	if [ -f package/usr/bin/bedrock-tools/tools/download-server ]; then rm package/usr/bin/bedrock-tools/tools/download-server; fi
 	mkdir -p dist
 	mkdir -p package/DEBIAN
+	mkdir -p package/usr/bin/bedrock-tools/tools
 	cp control.template package/DEBIAN/control
+	go build -o package/usr/bin/bedrock-tools/tools/download-server http/download_server.go
+	go build -o package/usr/bin/bedrock-tools/tools/backup-server tools/bedrock/backup/*.go
 	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control
 	dpkg-deb --build package/ dist/$(PACKAGE_NAME)_$(CURRENT_VERSION_MICRO)_all.deb
-	#rm -r dist/deb
+	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
+	if [ -f package/usr/bin/bedrock-tools/tools/download-server ]; then rm package/usr/bin/bedrock-tools/tools/download-server; fi
+	if [ -f package/usr/bin/bedrock-tools/tools/backup-server ]; then rm package/usr/bin/bedrock-tools/tools/backup-server; fi
 
 ## Gerenciamento de versões
 
