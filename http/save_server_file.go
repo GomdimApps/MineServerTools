@@ -26,6 +26,12 @@ func SaveFile(filename string, content []byte) error {
 	}
 
 	fmt.Println("Arquivo salvo com sucesso")
-
+	if filepath.Ext(filename) == ".zip" {
+		destDir := filepath.Join(dir, "unzipped")
+		if err := UnzipFile(filename, destDir); err != nil {
+			return err
+		}
+		fmt.Println("Arquivo descompactado com sucesso")
+	}
 	return nil
 }
