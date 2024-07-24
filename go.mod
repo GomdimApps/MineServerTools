@@ -1,4 +1,4 @@
-module MineServerTools
+module github.com/GomdimApps/MineServerTools
 
 go 1.22.5
 

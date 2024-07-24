@@ -10,7 +10,7 @@ chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/ja
 chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf
 chmod 711 /usr/bin/mine-server-tools /usr/bin/bedrock-tools/tools/backup-bedrock /usr/bin/bedrock-tools/tools/bedrock-update /usr/bin/bedrock-tools/tools/download-server
 
-dependencies=(tar wget rsync tmux pv zstd unzip)
+dependencies=(tar wget rsync tmux unzip)
 
 check_and_install() {
     echo "Verificando dependências..."
