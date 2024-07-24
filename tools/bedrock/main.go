@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"MineServerTools/http"
-	"MineServerTools/system"
+	"github.com/GomdimApps/MineServerTools/tools/bedrock/http"
+	"github.com/GomdimApps/MineServerTools/tools/bedrock/system"
 )
 
 func main() {
@@ -16,12 +16,12 @@ func main() {
 	fmt.Scanln(&input)
 
 	switch input {
-		case "1":
-      http.RunDownloadProcess()
-    case "2":
-			system.GetSystemInfo()
-    default:
-      fmt.Println("Invalid option.")
-      os.Exit(1)
-    }
+	case "1":
+		http.RunDownloadProcess()
+	case "2":
+		system.GetSystemInfo()
+	default:
+		fmt.Println("Invalid option.")
+		os.Exit(1)
+	}
 }
