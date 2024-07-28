@@ -1,3 +1,7 @@
+# MineServerTools
+- MineServerTools é um projeto open source que tem como objetivo automatizar os processos importantes dentro de um servidor Minecraft Bedrock. É um aplicativo Debian que pode ser instalado em seu servidor Linux, projetado para ser rápido e eficiente no uso.
+
+[![Doe](https://img.shields.io/badge/Doe-Agora-brightgreen)](https://pag.ae/7-LKKsoXa)
 
 # Compilação do projeto
 

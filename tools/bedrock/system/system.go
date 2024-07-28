@@ -1,4 +1,4 @@
-package system
+package main
 
 import (
 	"fmt"
@@ -9,20 +9,20 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
-func GetSystemInfo() {  
+func main() {
 	cpuPercent, err := cpu.Percent(time.Second, false)
 
 	if err != nil {
-    fmt.Printf("Error getting CPU percent: %v\n", err)
-    return
-  }
+		fmt.Printf("Error getting CPU percent: %v\n", err)
+		return
+	}
 
 	memory, err := mem.VirtualMemory()
 
-	if err!= nil {
-    fmt.Printf("Error getting memory usage: %v\n", err)
-    return
-  }
+	if err != nil {
+		fmt.Printf("Error getting memory usage: %v\n", err)
+		return
+	}
 
 	d, _ := disk.Usage("/")
 
@@ -33,8 +33,8 @@ func GetSystemInfo() {
 
 	fmt.Printf("-------Gerenciador do sistema--------\n\n")
 
-  fmt.Printf("Memory Total: %v MB\n",memory.Total / 1024 / 1024)
-	fmt.Printf("Memory Free: %v MB\n", memory.Free / 1024 / 1024)
+	fmt.Printf("Memory Total: %v MB\n", memory.Total/1024/1024)
+	fmt.Printf("Memory Free: %v MB\n", memory.Free/1024/1024)
 	if memory.UsedPercent >= 85 {
 		fmt.Println("##### WARNING: memory usage is over than 85%")
 	}
