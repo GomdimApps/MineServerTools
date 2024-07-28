@@ -10,34 +10,99 @@
 # Todos os direitos autorais reservados.
 # LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/ 
 
-show_menu() {
-    dialog --clear --title "Menu" \
-    --menu "Escolha uma opção:" 15 50 4 \
-    1 "Backup" \
-    2 "Update" \
-    2>&1 >/dev/tty
+show_main_menu() {
+    local choice
+
+    while true; do
+        choice=$(dialog --clear \
+                        --backtitle "Mine Server Tools" \
+                        --title "\Zb\Z1Menu Principal\Zn" \
+                        --colors \
+                        --nocancel \
+                        --menu "\nEscolha uma opção:" \
+                        15 60 5 \
+                        "1" "🗂️  \Zb\Z4Backup\Zn" \
+                        "2" "🔄  \Zb\Z4Atualização\Zn" \
+                        "3" "⚙️  \Zb\Z4Sistema\Zn" \
+                        "4" "🚪  \Zb\Z4Sair\Zn" \
+                        2>&1 >/dev/tty)
+
+        case $choice in
+            1)
+                show_backup_menu
+                ;;
+            2)
+                update_function
+                ;;
+            3)
+                system_function
+                ;;
+            4)
+                clear
+                exit 0
+                ;;
+        esac
+    done
 }
 
-backup() {
-    dialog --msgbox "Iniciando o backup..." 10 30
+show_backup_menu() {
+    local choice
+
+    while true; do
+        choice=$(dialog --clear \
+                        --backtitle "Mine Server Tools" \
+                        --title "\Zb\Z1Menu de Backup\Zn" \
+                        --colors \
+                        --nocancel \
+                        --menu "\nEscolha uma opção:" \
+                        15 60 4 \
+                        "1" "💾  \Zb\Z4Fazer backup agora\Zn" \
+                        "2" "🔍  \Zb\Z4Verificar backups\Zn" \
+                        "3" "🔙  \Zb\Z4Voltar\Zn" \
+                        2>&1 >/dev/tty)
+
+        case $choice in
+            1)
+                backup_now
+                ;;
+            2)
+                check_backups
+                ;;
+            3)
+                return
+                ;;
+        esac
+    done
 }
 
-update() {
-    dialog --msgbox "Iniciando a atualização..." 10 30
+backup_now() {
+    dialog --colors --title "\Zb\Z1Fazendo Backup\Zn" --programbox "\nAguarde enquanto o backup está sendo realizado..." 20 70 < <(backup-bedrock --backup)
 }
 
-choice=$(show_menu)
+check_backups() {
+    local output
+    output=$(backup-bedrock --view)
+    local height width
+    height=$(echo "$output" | wc -l)
+    width=$(echo "$output" | awk '{ if (length > L) L = length } END { print L }')
+    height=$((height + 10))
+    width=$((width + 10))
+    dialog --colors --title "\Zb\Z1Verificar Backups\Zn" --msgbox "$output" "$height" "$width"
+}
 
-case $choice in
-    1)
-        backup
-        ;;
-    2)
-        update
-        ;;
-    *)
-        dialog --msgbox "Opção inválida!" 10 30
-        ;;
-esac
+update_function() {
+    dialog --colors --nocancel --msgbox "\n\Zb\Z1Funcionalidade de Atualização ainda não implementada.\Zn" 10 40
+}
 
-clear
+system_function() {
+    dialog --colors --title "\Zb\Z1Informações do Sistema\Zn" --programbox 20 70 < <(info-bedrock)
+}
+
+if ! command -v dialog &> /dev/null
+then
+    echo "O comando 'dialog' não foi encontrado. Por favor, instale o 'dialog' e tente novamente."
+    exit 1
+fi
+
+show_main_menu
+
