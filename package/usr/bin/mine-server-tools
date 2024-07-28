@@ -76,12 +76,12 @@ show_backup_menu() {
 }
 
 backup_now() {
-    dialog --colors --title "\Zb\Z1Fazendo Backup\Zn" --programbox "\nAguarde enquanto o backup está sendo realizado..." 20 70 < <(backup-server --backup)
+    dialog --colors --title "\Zb\Z1Fazendo Backup\Zn" --programbox "\nAguarde enquanto o backup está sendo realizado..." 20 70 < <(backup-bedrock --backup)
 }
 
 check_backups() {
     local output
-    output=$(backup-server --view)
+    output=$(backup-bedrock --view)
     local height width
     height=$(echo "$output" | wc -l)
     width=$(echo "$output" | awk '{ if (length > L) L = length } END { print L }')
@@ -95,7 +95,7 @@ update_function() {
 }
 
 system_function() {
-    dialog --colors --nocancel --msgbox "\n\Zb\Z1Funcionalidade de Sistema ainda não implementada.\Zn" 10 40
+    dialog --colors --title "\Zb\Z1Informações do Sistema\Zn" --programbox 20 70 < <(info-bedrock)
 }
 
 if ! command -v dialog &> /dev/null

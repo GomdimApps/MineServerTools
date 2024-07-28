@@ -31,8 +31,6 @@ func main() {
 	freeGB := d.Free / 1024 / 1024 / 1024
 	usedGB := d.Used / 1024 / 1024 / 1024
 
-	fmt.Printf("-------Gerenciador do sistema--------\n\n")
-
 	fmt.Printf("Memory Total: %v MB\n", memory.Total/1024/1024)
 	fmt.Printf("Memory Free: %v MB\n", memory.Free/1024/1024)
 	if memory.UsedPercent >= 85 {
