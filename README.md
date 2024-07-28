@@ -56,8 +56,15 @@
   ```bash
   server-dir="/opt/server/"
   ```
+# Comandos via Interface
 
-# Comandos
+- Para acessar a interface da ferramenta, você pode utilizar o comando:
+
+  ```bash
+  mine-server-tools
+  ```
+
+# Comandos via terminal
 
 ## Backups
 
