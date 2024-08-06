@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	// Chama a função RunDownloadProcess sem tratar erro, pois a função não retorna erro
 	http.RunDownloadProcess()
 }

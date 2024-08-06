@@ -91,7 +91,7 @@ check_backups() {
 }
 
 update_function() {
-    dialog --colors --nocancel --msgbox "\n\Zb\Z1Funcionalidade de Atualização ainda não implementada.\Zn" 10 40
+    dialog --colors --title "\Zb\Z1Atualização do Servidor Bedrock\Zn" --programbox "\nEstamos realizando a atualização do servidor..." 20 70 < <(update-bedrock)
 }
 
 system_function() {

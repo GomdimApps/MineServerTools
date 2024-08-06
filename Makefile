@@ -9,7 +9,7 @@ package-deb:
 	mkdir -p package/DEBIAN
 	mkdir -p package/usr/bin/bedrock-tools/tools
 	cp control.template package/DEBIAN/control
-	go build -o package/usr/bin/bedrock-tools/tools/update-bedrock tools/bedrock/http/download_server.go
+	go build -o package/usr/bin/bedrock-tools/tools/update-bedrock tools/bedrock/update/*.go
 	go build -o package/usr/bin/bedrock-tools/tools/backup-bedrock tools/bedrock/backup/*.go
 	go build -o package/usr/bin/bedrock-tools/tools/info-bedrock tools/bedrock/system/system.go
 	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control
