@@ -8,6 +8,38 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
 3. **Agendamento de Tarefas**: Com o **MineServerTools**, você pode agendar tarefas específicas, como reinicializações programadas, backups ou outras ações. Isso permite uma gestão mais eficiente do servidor.
 
+# Instalação do pacote no Debian/Ubuntu
+
+- Para instalar este pacote Deb, você pode usar o comando abaixo como no exemplo:
+
+  ```bash
+  sudo dpkg -i MineServerTools_1.1.1_all.deb
+  ```
+
+# Desinstalação do pacote
+
+- Para desinstalar o pacote, use o comando:
+
+  ```bash
+  sudo apt purge mineservertools -y
+  ```
+
+# Visão Geral
+- Tela principal:
+
+  <img src="./docs/imgs/menu.png">
+
+- Menu das ferramentas de backup bedrock
+
+  <img src="./docs/imgs/menu-backup.png">
+
+- Ferramenta de atualização facil do server bedrock
+
+  <img src="./docs/imgs/server-update.png">
+
+- Ferramenta para verificar o uso do Servidor
+
+  <img src="./docs/imgs/get-info-system.png">
 
 # Compilação do projeto
 
@@ -29,22 +61,6 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
   ```bash
   make package-deb
-  ```
-
-# Instalação do pacote no Debian/Ubuntu
-
-- Para instalar este pacote Deb, você pode usar o comando abaixo como no exemplo:
-
-  ```bash
-  sudo dpkg -i MineServerTools_1.1.1_all.deb
-  ```
-
-# Desinstalação do pacote
-
-- Para desinstalar o pacote, use o comando:
-
-  ```bash
-  sudo apt purge mineservertools -y
   ```
 
 # Configuração da aplicação
