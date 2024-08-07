@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ const ConfigFilePath = "/etc/mineservertools/bedrock-server.conf"
 func GetServerDir() string {
 	content, err := ioutil.ReadFile(ConfigFilePath)
 	if err != nil {
-		fmt.Printf("Erro ao ler o arquivo de configuração: %v\n", err)
+		fmt.Printf("Error reading the bedrock configuration file")
 		return ""
 	}
 
@@ -69,7 +70,7 @@ func main() {
 
 	serverDir := GetServerDir()
 	if serverDir == "" {
-		fmt.Println("Erro ao obter o diretório do servidor.")
+		fmt.Println("Error getting the server directory.")
 		return
 	}
 
@@ -92,4 +93,13 @@ func main() {
 	} else {
 		fmt.Printf("Tamanho total da pasta do servidor: %.2f GB\n", float64(serverDirSize)/(1024*1024*1024))
 	}
+
+	cmd := exec.Command("sh", "-c", "top -b -n 1 | grep -q \"bedrock\" && echo \"Operando\" || echo \"Inativo\"")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Printf("Error checking server status")
+		return
+	}
+
+	fmt.Printf("Status do servidor: %s", output)
 }
