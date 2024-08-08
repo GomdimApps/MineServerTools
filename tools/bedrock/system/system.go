@@ -80,7 +80,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("\nUtilização da CPU: %.2f%%\n\n", cpuPercent[0])
+	fmt.Printf("\nUtilização da CPU: %.2f%%\n", cpuPercent[0])
 	fmt.Printf("Utilização da memória: %.2f%%\n\n", memory.UsedPercent)
 	fmt.Printf("Memória Total: %v MB\n", memory.Total/1024/1024)
 	fmt.Printf("Memória livre: %v MB\n", memory.Free/1024/1024)
@@ -89,9 +89,9 @@ func main() {
 	fmt.Printf("Disco Usado: %v GB (%.2f%%)\n\n", usedGB, d.UsedPercent)
 
 	if serverDirSize < 1024*1024*1024 {
-		fmt.Printf("Tamanho total da pasta do servidor: %v MB\n", serverDirSize/1024/1024)
+		fmt.Printf("Tamanho do servidor: %v MB\n", serverDirSize/1024/1024)
 	} else {
-		fmt.Printf("Tamanho total da pasta do servidor: %.2f GB\n", float64(serverDirSize)/(1024*1024*1024))
+		fmt.Printf("Tamanho do servidor: %.2f GB\n", float64(serverDirSize)/(1024*1024*1024))
 	}
 
 	cmd := exec.Command("sh", "-c", "top -b -n 1 | grep -q \"bedrock\" && echo \"Operando\" || echo \"Inativo\"")
@@ -102,4 +102,20 @@ func main() {
 	}
 
 	fmt.Printf("Status do servidor: %s", output)
+
+	cmd = exec.Command("sh", "-c", "ip route get 8.8.8.8 | awk '{print $7}'")
+	ipOutput, err := cmd.Output()
+	if err != nil {
+		fmt.Printf("Erro ao obter o IP do servidor: %v\n", err)
+		return
+	}
+	fmt.Printf("\nIP do servidor: %s\n", strings.TrimSpace(string(ipOutput)))
+
+	cmd = exec.Command("sh", "-c", `output=$(lsof -i -P -n | grep bedrock | awk '/IPv4/ {print "IPv4: " $9} /IPv6/ {print "IPv6: " $9}'); if [ -z "$output" ]; then echo "Server inativo"; else echo "$output"; fi`)
+	portsOutput, err := cmd.Output()
+	if err != nil {
+		fmt.Printf("Erro ao obter as portas utilizadas: %v\n", err)
+		return
+	}
+	fmt.Printf("Portas utilizadas:\n%s", string(portsOutput))
 }

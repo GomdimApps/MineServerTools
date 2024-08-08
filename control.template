@@ -7,6 +7,6 @@ Description: Description: Ferramentas essenciais para manter um servidor Minecra
  que um servidor Minecraft esteja sempre ativo e funcionando de forma estável. 
  Inclui suporte para reinicialização automática, backups regulares, e monitoramento
  de desempenho.
-Depends: tar, wget, rsync, tmux, unzip
+Depends: tar, wget, rsync, tmux, unzip, lsof
 
 
