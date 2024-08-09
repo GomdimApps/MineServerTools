@@ -1,0 +1,70 @@
+#!/bin/bash
+
+SESSION_NAME="server-bedrock"
+CONFIG_FILE="/etc/mineservertools/bedrock-server.conf"
+
+get_session_dir() {
+    if [ -f "$CONFIG_FILE" ]; then
+        SESSION_DIR=$(grep -E '^server-dir=' "$CONFIG_FILE" | cut -d'=' -f2 | tr -d '"')
+    else
+        echo "Arquivo de configuração '$CONFIG_FILE' não encontrado."
+        exit 1
+    fi
+}
+
+start_session() {
+    get_session_dir
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        echo "O server bedrock ja foi inciado!"
+    else
+        tmux new-session -d -s $SESSION_NAME "cd $SESSION_DIR; LD_LIBRARY_PATH=. ./bedrock_server"
+        echo "Iniciando o server bedrock.."
+    fi
+}
+
+stop_session() {
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        tmux kill-session -t $SESSION_NAME
+        echo "Parando Server Bedrock"
+    else
+        echo "O server bedrock não está ligado."
+    fi
+}
+
+connect_session() {
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        tmux attach -t $SESSION_NAME
+    else
+        echo "O server bedrock não está ligado."
+    fi
+}
+
+send_command() {
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        tmux send-keys -t $SESSION_NAME "$1" C-m
+        echo "Comando '$1' enviado para o server bedrock."
+    else
+        echo "O server  bedrock não está ligado."
+    fi
+}
+
+case "$1" in
+    --start)
+        start_session
+        ;;
+    --stop)
+        stop_session
+        ;;
+    --c)
+        connect_session
+        ;;
+    --cmd)
+        shift
+        send_command "$@"
+        ;;
+    *)
+        echo "Uso: $0 {--start|--stop|--c|--cmd <comando>}"
+        exit 1
+        ;;
+
+esac
