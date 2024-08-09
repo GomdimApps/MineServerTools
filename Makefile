@@ -4,7 +4,6 @@ SHELL := /bin/bash
 .PHONY: package-deb
 package-deb:
 	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
-	if [ -f package/usr/bin/bedrock-tools/tools/download-server ]; then rm package/usr/bin/bedrock-tools/tools/download-server; fi
 	mkdir -p dist
 	mkdir -p package/DEBIAN
 	mkdir -p package/usr/bin/bedrock-tools/tools
