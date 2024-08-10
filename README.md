@@ -41,6 +41,24 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
   <img src="./docs/imgs/get-info-system.png">
 
+## Colaboradores
+
+- [Isac Gondim (GomdimApps)](https://github.com/GomdimApps/)
+- [João Pedro Maciel (JoaoPedr0Maciel)](https://github.com/JoaoPedr0Maciel/)
+- [Pedro Felipe (PedroFelipeCS)](https://github.com/PedroFelipeCS)
+
+## Como Contribuir
+
+Se você também deseja ajudar a melhorar o **MineServerTools**, considere as seguintes maneiras de contribuir:
+
+[![Doe](https://img.shields.io/badge/Doe-Agora-brightgreen)](https://pag.ae/7-LKKsoXa)
+
+1. **Envie Problemas (Issues)**: Se encontrar algum problema ou tiver uma ideia para aprimorar o projeto, abra um problema no repositório oficial.
+
+2. **Envie Solicitações de Pull (Pull Requests)**: Se você tem correções ou melhorias específicas, envie uma solicitação de pull. Sua contribuição será revisada e considerada para inclusão no projeto.
+
+3. **Compartilhe com Outros**: Espalhe a palavra sobre o **MineServerTools** para outros administradores de servidores Minecraft. Quanto mais pessoas usarem e contribuírem, melhor o projeto se tornará!
+
 # Compilação do projeto
 
 ## Instalação do make
@@ -104,6 +122,93 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
   backup-bedrock --view
   ```
 
+### Console Bedrock
+
+- Você pode iniciar o servidor usando o comando:
+
+  ```bash
+  console-bedrock --start
+  ```
+
+   <img src="./docs/imgs/ative-server-bedrock.png">
+
+- Você pode parar o servidor usando o comando:
+
+  ```bash
+  console-bedrock --stop
+  ```
+
+- Você pode acessar o console do servidor usando o comando:
+
+  ```bash
+  console-bedrock --c
+  ```
+
+- Você pode coloca comandos do minecraft bedrock no seu servidor usando o comando:
+
+  ```bash
+  console-bedrock --cmd "seu comando"
+  ```
+
+# Comandos para Minecraft Bedrock
+
+Como operador do servidor voce pode usar comandos em seu mundo para deixa muito mais legal.
+
+<img src="./docs/imgs/cmd-bedrock.png">
+
+## Comandos de Jogador
+
+  ```bash
+console-bedrock --cmd "ability @p mayfly true"
+console-bedrock --cmd "effect @p speed 30 2"
+console-bedrock --cmd "enchant @p sharpness 5"
+console-bedrock --cmd "experience add @p 1000"
+console-bedrock --cmd "gamemode creative @p"
+console-bedrock --cmd "give @p diamond_sword"
+console-bedrock --cmd "kill @e[type=zombie]"
+console-bedrock --cmd "tp @p 100 64 100"
+  ```
+
+## Comandos de Mundo
+
+  ```bash
+console-bedrock --cmd "clone 0 0 0 10 10 10 20 20 20"
+console-bedrock --cmd "fill 0 0 0 10 10 10 stone"
+console-bedrock --cmd "setblock 10 64 10 diamond_block"
+console-bedrock --cmd "summon zombie 100 64 100"
+console-bedrock --cmd "weather clear"
+console-bedrock --cmd "time set day"
+  ```
+
+## Comandos de Administração
+
+  ```bash
+console-bedrock --cmd "ban jogador123"
+console-bedrock --cmd "deop jogador123"
+console-bedrock --cmd "kick jogador123"
+console-bedrock --cmd "op jogador123"
+console-bedrock --cmd "whitelist add jogador123"
+  ```
+
+## Comandos de Informações
+
+  ```bash
+console-bedrock --cmd "list"
+console-bedrock --cmd "msg jogador123 Olá!"
+console-bedrock --cmd "say Bem-vindos ao servidor!"
+console-bedrock --cmd "title @p title {\"text\":\"Bem-vindo!\"}"
+  ```
+
+## Comandos de Blocos de Comando
+
+  ```bash
+console-bedrock --cmd "execute @e[type=zombie] ~ ~ ~ say Eu sou um zumbi!"
+console-bedrock --cmd "function minha_funcao"
+console-bedrock --cmd "gamerule keepInventory true"
+console-bedrock --cmd "gamerule showcoordinates true"
+console-bedrock --cmd "testfor @p[r=10]"
+  ```
+
 ## Informações do Sistema
 
 - Para verificar as informações importantes do servidor que está hospedado o seu server minecraft como: Memoria RAM, Uso de CPU e etc, use o comando:
@@ -116,20 +221,4 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
 Gostaria de expressar minha gratidão aos colaboradores que tornaram o **MineServerTools** possível. Seus esforços e contribuições são inestimáveis para a comunidade Minecraft e para todos os administradores de servidores.
 
-## Colaboradores
 
-- [Isac Gondim (GomdimApps)](https://github.com/GomdimApps/)
-- [João Pedro Maciel (JoaoPedr0Maciel)](https://github.com/JoaoPedr0Maciel/)
-- [Pedro Felipe (PedroFelipeCS)](https://github.com/PedroFelipeCS)
-
-## Como Contribuir
-
-Se você também deseja ajudar a melhorar o **MineServerTools**, considere as seguintes maneiras de contribuir:
-
-[![Doe](https://img.shields.io/badge/Doe-Agora-brightgreen)](https://pag.ae/7-LKKsoXa)
-
-1. **Envie Problemas (Issues)**: Se encontrar algum problema ou tiver uma ideia para aprimorar o projeto, abra um problema no repositório oficial.
-
-2. **Envie Solicitações de Pull (Pull Requests)**: Se você tem correções ou melhorias específicas, envie uma solicitação de pull. Sua contribuição será revisada e considerada para inclusão no projeto.
-
-3. **Compartilhe com Outros**: Espalhe a palavra sobre o **MineServerTools** para outros administradores de servidores Minecraft. Quanto mais pessoas usarem e contribuírem, melhor o projeto se tornará!
