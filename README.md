@@ -122,6 +122,19 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   backup-bedrock --view
   ```
 
+### Agendar Backups
+
+- Você pode agendar backups do servidor usando o comando:
+
+  ```bash
+  crontab -e
+  ```
+- coloque a tarefa:
+
+  ```bash
+  0 */4 * * * backup-bedrock --backup ; console-bedrock --cmd "say backup realizado"
+  ```
+
 ### Console Bedrock
 
 - Você pode iniciar o servidor usando o comando:
@@ -154,7 +167,7 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
 
 A tabela abaixo apresenta uma lista abrangente de comandos disponíveis no Minecraft Bedrock Edition. Cada comando é acompanhado por uma breve descrição de sua função, permitindo aos jogadores entender e utilizar esses comandos de maneira eficaz para melhorar sua experiência de jogo.
 
-Os comandos variam desde a manipulação de habilidades dos jogadores, controle do ambiente de jogo, gerenciamento de inventário, até a execução de ações específicas como teletransporte e invocação de entidades. Esta tabela serve como um guia rápido para jogadores que desejam explorar e dominar os diversos aspectos do jogo através do uso de comandos..
+Os comandos variam desde a manipulação de habilidades dos jogadores, controle do ambiente de jogo, gerenciamento de inventário, até a execução de ações específicas como teletransporte e invocação de entidades. Esta tabela serve como um guia rápido para jogadores que desejam explorar e dominar os diversos aspectos do jogo através do uso de comandos.
 
 <img src="./docs/imgs/cmd-bedrock.png">
 
