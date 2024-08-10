@@ -122,6 +122,8 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   backup-bedrock --view
   ```
 
+  <img src="./docs/imgs/view-backup.png">
+
 ### Agendar Backups
 
 - Você pode agendar backups do servidor usando o comando:
@@ -163,6 +165,13 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   console-bedrock --cmd "seu comando"
   ```
 
+### Informações do Sistema
+
+- Para verificar as informações importantes do servidor que está hospedado o seu server minecraft como: Memoria RAM, Uso de CPU e etc, use o comando:
+
+  ```bash
+  info-bedrock
+  ```
 # Comandos para Minecraft Bedrock
 
 A tabela abaixo apresenta uma lista abrangente de comandos disponíveis no Minecraft Bedrock Edition. Cada comando é acompanhado por uma breve descrição de sua função, permitindo aos jogadores entender e utilizar esses comandos de maneira eficaz para melhorar sua experiência de jogo.
@@ -271,16 +280,6 @@ console-bedrock --cmd "function minha_funcao"
 console-bedrock --cmd "gamerule keepInventory true"
 console-bedrock --cmd "gamerule showcoordinates true"
 console-bedrock --cmd "testfor @p[r=10]"
-  ```
-
-
-
-## Informações do Sistema
-
-- Para verificar as informações importantes do servidor que está hospedado o seu server minecraft como: Memoria RAM, Uso de CPU e etc, use o comando:
-
-  ```bash
-  info-bedrock
   ```
 
 # Agradecimentos
