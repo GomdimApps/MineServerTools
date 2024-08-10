@@ -152,9 +152,60 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
 
 # Comandos para Minecraft Bedrock
 
-Como operador do servidor voce pode usar comandos em seu mundo para deixa muito mais legal.
+A tabela abaixo apresenta uma lista abrangente de comandos disponíveis no Minecraft Bedrock Edition. Cada comando é acompanhado por uma breve descrição de sua função, permitindo aos jogadores entender e utilizar esses comandos de maneira eficaz para melhorar sua experiência de jogo.
+
+Os comandos variam desde a manipulação de habilidades dos jogadores, controle do ambiente de jogo, gerenciamento de inventário, até a execução de ações específicas como teletransporte e invocação de entidades. Esta tabela serve como um guia rápido para jogadores que desejam explorar e dominar os diversos aspectos do jogo através do uso de comandos..
 
 <img src="./docs/imgs/cmd-bedrock.png">
+
+
+| Comando          | Ação                                                                 |
+|------------------|----------------------------------------------------------------------|
+| /ability         | Concede ou revoga habilidade a um jogador                            |
+| /alwaysday       | Define se é sempre dia                                               |
+| /clear           | Limpa o inventário de itens                                          |
+| /clone           | Clona blocos de uma área para outra                                  |
+| /connect         | Conecta ao servidor multiplayer                                      |
+| /deop            | Remove o status de operador de um jogador                            |
+| /difficulty      | Define a dificuldade do jogo                                         |
+| /effect          | Adiciona ou remove efeitos de status                                 |
+| /enchant         | Encanta um item no inventário de um jogador                          |
+| /execute         | Executa um comando como outro jogador                                |
+| /fill            | Preenche uma área com blocos                                         |
+| /function        | Executa uma função                                                   |
+| /gamemode        | Define o modo de jogo                                                |
+| /gamerule        | Define ou consulta regras específicas do jogo                        |
+| /give            | Dá um item a um jogador                                              |
+| /help            | Fornece ajuda sobre comandos                                         |
+| /kick            | Expulsa um jogador do jogo                                           |
+| /kill            | Mata entidades                                                       |
+| /list            | Lista jogadores conectados                                           |
+| /locate          | Localiza a estrutura mais próxima                                    |
+| /me              | Envia uma mensagem de ação no chat                                   |
+| /mobevent        | Controla eventos de mobs                                             |
+| /op              | Concede status de operador a um jogador                              |
+| /particle        | Cria partículas                                                      |
+| /playsound       | Toca um som                                                          |
+| /reload          | Recarrega funções                                                    |
+| /replaceitem     | Substitui itens no inventário                                        |
+| /say             | Envia uma mensagem no chat                                           |
+| /scoreboard      | Gerencia o placar                                                    |
+| /setblock        | Define um bloco em uma posição específica                            |
+| /setmaxplayers   | Define o número máximo de jogadores                                  |
+| /setworldspawn   | Define o ponto de spawn do mundo                                     |
+| /spawnpoint      | Define o ponto de spawn de um jogador                                |
+| /spreadplayers   | Espalha jogadores aleatoriamente                                     |
+| /stopsound       | Para sons                                                            |
+| /summon          | Invoca entidades                                                     |
+| /tag             | Gerencia tags de jogadores                                           |
+| /teleport        | Teletransporta entidades                                             |
+| /tell            | Envia uma mensagem privada                                           |
+| /time            | Define ou consulta a hora do jogo                                    |
+| /title           | Exibe um título na tela                                              |
+| /tp              | Teletransporta entidades                                             |
+| /weather         | Altera o clima                                                       |
+| /xp              | Adiciona ou remove pontos de experiência                             |
+
 
 ## Comandos de Jogador
 
@@ -208,6 +259,8 @@ console-bedrock --cmd "gamerule keepInventory true"
 console-bedrock --cmd "gamerule showcoordinates true"
 console-bedrock --cmd "testfor @p[r=10]"
   ```
+
+
 
 ## Informações do Sistema
 
