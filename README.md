@@ -8,6 +8,8 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
 3. **Agendamento de Tarefas**: Com o **MineServerTools**, você pode agendar tarefas específicas, como reinicializações programadas, backups ou outras ações. Isso permite uma gestão mais eficiente do servidor.
 
+---
+
 # Instalação do pacote no Debian/Ubuntu
 
 - Para instalar este pacote Deb, você pode usar o comando abaixo como no exemplo:
@@ -145,6 +147,12 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   console-bedrock --start
   ```
 
+- Você pode iniciar o servidor de uma pasta específica usando o comando:
+
+  ```bash
+  console-bedrock --start -d /opt/server2/
+  ```
+
    <img src="./docs/imgs/ative-server-bedrock.png">
 
 - Você pode parar o servidor usando o comando:
@@ -165,6 +173,20 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   console-bedrock --cmd "seu comando"
   ```
 
+### Download e Atualização do Servidor
+
+- Você pode instalar servidores Bedrock em pastas específicas de maneira rápida e simples. Use o comando:
+
+  ```bash
+  update-bedrock --new-server /opt/server2/
+  ```
+
+- Você pode realizar a atualização do seu servidor de forma rápida e fácil utilizando o arquivo `bedrock-server.conf`. Use o comando:
+
+  ```bash
+  update-bedrock --update
+  ```
+
 ### Informações do Sistema
 
 - Para verificar as informações importantes do servidor que está hospedado o seu server minecraft como: Memoria RAM, Uso de CPU e etc, use o comando:
@@ -172,6 +194,7 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
   ```bash
   info-bedrock
   ```
+
 # Comandos para Minecraft Bedrock
 
 A tabela abaixo apresenta uma lista abrangente de comandos disponíveis no Minecraft Bedrock Edition. Cada comando é acompanhado por uma breve descrição de sua função, permitindo aos jogadores entender e utilizar esses comandos de maneira eficaz para melhorar sua experiência de jogo.
