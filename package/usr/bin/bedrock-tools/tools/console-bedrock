@@ -13,12 +13,23 @@ get_session_dir() {
 }
 
 start_session() {
-    get_session_dir
-    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
-        echo "O server bedrock ja foi inciado!"
+    local dir="$1"
+
+    if [ -z "$dir" ]; then
+        get_session_dir
+        dir="$SESSION_DIR"
     else
-        tmux new-session -d -s $SESSION_NAME "cd $SESSION_DIR; LD_LIBRARY_PATH=. ./bedrock_server"
-        echo "Iniciando o server bedrock.."
+        if [ ! -d "$dir" ]; then
+            echo "Diretório especificado '$dir' não existe."
+            exit 1
+        fi
+    fi
+
+    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        echo "O server bedrock já foi iniciado!"
+    else
+        tmux new-session -d -s $SESSION_NAME "cd $dir; LD_LIBRARY_PATH=. ./bedrock_server"
+        echo "Iniciando o server bedrock no diretório '$dir'..."
     fi
 }
 
@@ -44,13 +55,25 @@ send_command() {
         tmux send-keys -t $SESSION_NAME "$1" C-m
         echo "Comando '$1' enviado para o server bedrock."
     else
-        echo "O server  bedrock não está ligado."
+        echo "O server bedrock não está ligado."
     fi
 }
 
 case "$1" in
     --start)
         start_session
+        ;;
+    --start)
+        if [ "$2" = "-d" ]; then
+            if [ -z "$3" ]; then
+                echo "Diretório não especificado após -d. Uso: $0 --start -d <diretório>"
+                exit 1
+            fi
+            start_session "$3"
+        else
+            echo "Uso: $0 --start -d <diretório>"
+            exit 1
+        fi
         ;;
     --stop)
         stop_session
@@ -63,8 +86,7 @@ case "$1" in
         send_command "$@"
         ;;
     *)
-        echo "Uso: $0 {--start|--stop|--c|--cmd <comando>}"
+        echo "Uso: $0 {--start|--start -d <diretório>|--stop|--c|--cmd <comando>}"
         exit 1
         ;;
-
 esac
