@@ -103,7 +103,7 @@ Se você também deseja ajudar a melhorar o **MineServerTools**, considere as se
 - Para acessar a interface da ferramenta, você pode utilizar o comando:
 
   ```bash
-  mine-server-tools
+  mtools
   ```
 
 # Comandos via terminal
