@@ -42,7 +42,7 @@ func SaveFile(filename string, content []byte, destDir string) error {
 		}
 	}
 
-	cmd := "ps ax | grep './bedrock_server' | grep -v grep | awk '{print $1}' | xargs kill -9"
+	cmd := "top -b -n 1 | grep -q 'bedrock' ; pkill bedrock_server || echo 'Server parado'"
 	if err := executeCommand(cmd); err != nil {
 		return fmt.Errorf("erro ao executar o comando para matar o processo: %v", err)
 	}
