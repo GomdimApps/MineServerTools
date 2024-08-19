@@ -28,14 +28,14 @@ start_session() {
     if tmux has-session -t $SESSION_NAME 2>/dev/null; then
         echo "O server bedrock já foi iniciado!"
     else
-        tmux new-session -d -s $SESSION_NAME "cd $dir; LD_LIBRARY_PATH=. ./bedrock_server"
+        tmux new-session -d -s $SESSION_NAME "cd $dir ; truncate -s 0 /var/log/bedrock-console.log ; LD_LIBRARY_PATH=. ./bedrock_server | tee -a /var/log/bedrock-console.log"
         echo "Iniciando o server bedrock no diretório '$dir'..."
     fi
 }
 
 stop_session() {
     if tmux has-session -t $SESSION_NAME 2>/dev/null; then
-        tmux kill-session -t $SESSION_NAME
+        (tmux kill-session -t $SESSION_NAME ; truncate -s 0 /var/log/bedrock-console.log) 2>/dev/null
         echo "Parando Server Bedrock"
     else
         echo "O server bedrock não está ligado."
