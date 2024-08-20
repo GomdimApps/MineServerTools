@@ -19,11 +19,11 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Create package
-      run: make installer
+      run: make package-deb
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        repo_token: "${{ secrets.DEPLOY }}"
         prerelease: false
         files: |
           dist/*.deb
