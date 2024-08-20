@@ -29,7 +29,7 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 # Visão Geral
 - Tela principal:
 
-  <img src="./docs/imgs/menu.png">
+  <img src="./docs/imgs/overview.gif">
 
 - Menu das ferramentas de backup bedrock
 
@@ -37,11 +37,15 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 
 - Ferramenta de atualização facil do server bedrock
 
-  <img src="./docs/imgs/server-update.png">
+  <img src="./docs/imgs/update-menu.png">
 
 - Ferramenta para verificar o uso do Servidor
 
   <img src="./docs/imgs/get-info-system.png">
+
+- Ferramenta para acessar o console do Servidor
+
+  <img src="./docs/imgs/menu_console.png">
 
 ## Colaboradores
 
