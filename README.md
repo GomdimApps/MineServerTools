@@ -15,8 +15,15 @@ O **MineServerTools** é um conjunto de ferramentas essenciais para manter um se
 - Para instalar este pacote Deb, você pode usar o comando abaixo como no exemplo:
 
   ```bash
-  sudo dpkg -i MineServerTools_1.1.1_all.deb
+   sudo apt update ; sudo apt upgrade -y ; sudo apt install dialog -y
   ```
+
+  ```bash
+  sudo apt install tar wget rsync tmux unzip lsof -y
+  ```
+
+  ```bash
+  sudo wget https://github.com/GomdimApps/MineServerTools/releases/download/v2.0.1/MineServerTools_2.0.1_all.deb ; sudo dpkg -i MineServerTools_2.0.1_all.deb
 
 # Desinstalação do pacote
 
