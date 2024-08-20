@@ -48,6 +48,7 @@ func Backup() {
 	}
 
 	logger.LogSuccess(fmt.Sprintf("Backup concluído com sucesso: %s", fileName))
+	fmt.Printf("Backup concluído com sucesso: %s\n", fileName)
 }
 
 func ViewBackup() {

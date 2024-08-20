@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# Ferramentas essenciais para manter um servidor Minecraft Bedrock sempre ativo.
+# Este pacote fornece uma coleção de ferramentas e scripts necessários para garantir
+# que um servidor Minecraft Bedrock e Java Edition esteja sempre ativo e funcionando de forma estável.
+# Inclui suporte para reinicialização automática, backups regulares, e monitoramento
+# de desempenho.
+#
+# Desenvolvido por Isac Gondim e Pedro Felipe
+# Todos os direitos autorais reservados.
+# LinkedIn: https://www.linkedin.com/in/isac-gondim-07a836227/ 
+
+SESSION_NAME="server-bedrock"
+show_main_menu() {
+    local choice
+
+    while true; do
+        choice=$(dialog --clear \
+                        --backtitle "Mine Server Tools" \
+                        --title "\Zb\Z1Menu Principal\Zn" \
+                        --colors \
+                        --nocancel \
+                        --menu "\nEscolha uma opção:" \
+                        15 60 5 \
+                        "1" "🗂️  \Zb\Z4Backup\Zn" \
+                        "2" "🔄  \Zb\Z4Atualização\Zn" \
+                        "3" "⚙️  \Zb\Z4Sistema\Zn" \
+                        "4" "#️⃣  \Zb\Z4Ver console\Zn" \
+                        "5" "🚪  \Zb\Z4Sair\Zn" \
+                        2>&1 >/dev/tty)
+
+        case $choice in
+            1)
+                show_backup_menu
+                ;;
+            2)
+                update_function
+                ;;
+            3)
+                system_function
+                ;;
+            4)
+                show_console_menu
+                ;;
+            5)
+                clear
+                exit 0
+                ;;
+        esac
+    done
+}
+
+show_backup_menu() {
+    local choice
+
+    while true; do
+        choice=$(dialog --clear \
+                        --backtitle "Mine Server Tools" \
+                        --title "\Zb\Z1Menu de Backup\Zn" \
+                        --colors \
+                        --nocancel \
+                        --menu "\nEscolha uma opção:" \
+                        15 60 4 \
+                        "1" "💾  \Zb\Z4Fazer backup agora\Zn" \
+                        "2" "🔍  \Zb\Z4Verificar backups\Zn" \
+                        "3" "🔙  \Zb\Z4Voltar\Zn" \
+                        2>&1 >/dev/tty)
+
+        case $choice in
+            1)
+                backup_now
+                ;;
+            2)
+                check_backups
+                ;;
+            3)
+                return
+                ;;
+        esac
+    done
+}
+
+show_console_menu() {
+    local choice
+
+    while true; do
+        choice=$(dialog --clear \
+                        --backtitle "Mine Server Tools" \
+                        --title "\Zb\Z1Menu de console\Zn" \
+                        --colors \
+                        --nocancel \
+                        --menu "\nEscolha uma opção:" \
+                        15 60 4 \
+                        "1" "▶️  \Zb\Z4Iniciar Servidor\Zn" \
+                        "2" "🛑  \Zb\Z4Parar Servidor\Zn" \
+                        "3" "#️⃣  \Zb\Z4Ver console\Zn" \
+                        "4" "</>  \Zb\Z4Enviar Comandos\Zn" \
+                        "5" "🔙  \Zb\Z4Voltar\Zn" \
+                        2>&1 >/dev/tty)
+
+        case $choice in
+            1)
+                dialog --colors --title "\Zb\Z1Iniciar o servidor\Zn" --programbox "\n" 20 70 < <(console-bedrock --start)
+                ;;
+            2)
+                dialog --colors --title "\Zb\Z1Desligar o servidor\Zn" --programbox "\n" 20 70 < <(console-bedrock --stop)
+                ;;
+            3)  
+                 if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+                     dialog --colors --title "\Zb\Z1Console do Servidor\Zn" --msgbox "$(tail /var/log/bedrock-console.log)" "$(( $(tail /var/log/bedrock-console.log | wc -l) + 10 ))" "$(( $(tail /var/log/bedrock-console.log | awk '{ if (length > L) L = length } END { print L }') + 10 ))"
+                 else
+                    dialog --colors --title "\Zb\Z1Console do Servidor\Zn" --msgbox "O server bedrock não está ligado." 20 70
+                 fi
+                ;;
+            4)
+               send_command_function
+                ;;
+            5)
+                return
+                ;;
+        esac
+    done
+}
+
+
+backup_now() {
+    dialog --colors --title "\Zb\Z1Fazendo Backup\Zn" --programbox "\nAguarde enquanto o backup está sendo realizado..." 20 70 < <(backup-bedrock --backup)
+}
+
+check_backups() {
+    dialog --colors --title "\Zb\Z1Verificar Backups\Zn" --msgbox "$(backup-bedrock --view)" "$(( $(backup-bedrock --view | wc -l) + 10 ))" "$(( $(backup-bedrock --view | awk '{ if (length > L) L = length } END { print L }') + 10 ))"
+}
+
+update_function() {
+    dialog --colors --title "\Zb\Z1Atualização do Servidor Bedrock\Zn" --programbox "\nEstamos realizando a atualização do servidor..." 20 70 < <(update-bedrock --update)
+}
+
+system_function() {
+    dialog --colors --title "\Zb\Z1Console do Servidor\Zn" --msgbox "$(info-bedrock)" "$(( $(info-bedrock | wc -l) + 10 ))" "$(( $(info-bedrock | awk '{ if (length > L) L = length } END { print L }') + 10 ))"
+}
+
+send_command_function() {
+   input=$(dialog --title "Enviar comandos para o servidor" \
+               --inputbox "Digite seu comando:" 20 70 \
+               3>&1 1>&2 2>&3 3>&-)
+
+exit_status=$?
+if [ $exit_status -eq 1 ] || [ $exit_status -eq 255 ]; then
+    dialog --title "Cancelado" --msgbox "Você cancelou a operação." 20 70
+else
+    output=$(console-bedrock --cmd "$input" ; sleep 1 ; tail /var/log/bedrock-console.log)
+    num_lines=$(echo "$output" | wc -l)
+    max_length=$(echo "$output" | awk '{ if (length > L) L = length } END { print L }')
+
+     if tmux has-session -t $SESSION_NAME 2>/dev/null; then
+        dialog --colors --title "\Zb\Z1Console do Servidor\Zn" --msgbox "$output" "$((num_lines + 10))" "$((max_length + 10))"
+    else
+        dialog --colors --title "\Zb\Z1Console do Servidor\Zn" --msgbox "O server bedrock não está ligado." "$((num_lines + 10))" "$((max_length + 10))"
+    fi
+fi
+}
+
+if ! command -v dialog &> /dev/null
+then
+    echo "O comando 'dialog' não foi encontrado. Por favor, instale o 'dialog' e tente novamente."
+    exit 1
+fi
+
+show_main_menu
+

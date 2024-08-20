@@ -4,12 +4,11 @@ SHELL := /bin/bash
 .PHONY: package-deb
 package-deb:
 	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
-	if [ -f package/usr/bin/bedrock-tools/tools/download-server ]; then rm package/usr/bin/bedrock-tools/tools/download-server; fi
 	mkdir -p dist
 	mkdir -p package/DEBIAN
 	mkdir -p package/usr/bin/bedrock-tools/tools
 	cp control.template package/DEBIAN/control
-	go build -o package/usr/bin/bedrock-tools/tools/update-bedrock tools/bedrock/http/download_server.go
+	go build -o package/usr/bin/bedrock-tools/tools/update-bedrock tools/bedrock/update/*.go
 	go build -o package/usr/bin/bedrock-tools/tools/backup-bedrock tools/bedrock/backup/*.go
 	go build -o package/usr/bin/bedrock-tools/tools/info-bedrock tools/bedrock/system/system.go
 	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control

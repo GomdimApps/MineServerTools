@@ -26,7 +26,7 @@ func GetLatestServerVersion() (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("error, statusCode: %d", resp.StatusCode)
+		return "", fmt.Errorf("erro, statusCode: %d", resp.StatusCode)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
