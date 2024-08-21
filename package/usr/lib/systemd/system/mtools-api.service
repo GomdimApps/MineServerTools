@@ -1,0 +1,13 @@
+[Unit]
+Description=Microsserviço para o provisionamento de servidores Minecraft via API para clientes
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=2
+ExecStart=/usr/bin/mtools-api
+
+[Install]
+WantedBy=multi-user.target
