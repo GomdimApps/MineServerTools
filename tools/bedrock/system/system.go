@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -45,47 +46,113 @@ func DirSize(path string) (uint64, error) {
 	return size, err
 }
 
-func main() {
+func GetDiskUsage(path string) (totalBytes, freeBytes, usedBytes uint64, usedPercent float64) {
+	usage, _ := disk.Usage(path)
+	return usage.Total, usage.Free, usage.Used, usage.UsedPercent
+}
+
+func GetServerIP() (string, error) {
+	cmd := exec.Command("sh", "-c", "ip route get 8.8.8.8 | awk '{print $7}'")
+	output, err := cmd.Output()
+	return strings.TrimSpace(string(output)), err
+}
+
+func GetServerStatus() (string, error) {
+	cmd := exec.Command("sh", "-c", "top -b -n 1 | grep -q \"bedrock\" && echo \"Operando\" || echo \"Inativo\"")
+	output, err := cmd.Output()
+	return strings.TrimSpace(string(output)), err
+}
+
+func GetPortsUsed() (string, error) {
+	cmd := exec.Command("sh", "-c", `output=$(lsof -i -P -n | grep bedrock | awk '/IPv4/ {print "IPv4: " $9} /IPv6/ {print "IPv6: " $9}'); if [ -z "$output" ]; then echo "Servidor inativo"; else echo "$output"; fi`)
+	output, err := cmd.Output()
+	return strings.TrimSpace(string(output)), err
+}
+
+func GetStatusJSON() (string, error) {
 	cpuPercent, err := cpu.Percent(time.Second, false)
 	if err != nil {
-		fmt.Printf("Erro ao obter a porcentagem de uso da CPU: %v\n", err)
-		return
+		return "", fmt.Errorf("erro ao obter a porcentagem de uso da CPU: %v", err)
 	}
 
 	memory, err := mem.VirtualMemory()
 	if err != nil {
-		fmt.Printf("Erro ao obter o uso da memória: %v\n", err)
-		return
+		return "", fmt.Errorf("erro ao obter o uso da memória: %v", err)
 	}
 
-	diskUsage, _ := disk.Usage("/")
-	totalGB := diskUsage.Total / 1024 / 1024 / 1024
-	freeGB := diskUsage.Free / 1024 / 1024 / 1024
-	usedGB := diskUsage.Used / 1024 / 1024 / 1024
+	totalDisk, freeDisk, usedDisk, usedPercent := GetDiskUsage("/")
+	serverDir := GetServerDir()
+	if serverDir == "" {
+		return "", fmt.Errorf("erro ao obter o diretório do servidor")
+	}
+
+	serverDirSize, err := DirSize(serverDir)
+	if err != nil {
+		return "", fmt.Errorf("erro ao obter o tamanho do diretório do servidor: %v", err)
+	}
+
+	serverStatus, err := GetServerStatus()
+	if err != nil {
+		return "", fmt.Errorf("erro ao verificar o status do servidor: %v", err)
+	}
+
+	serverIP, err := GetServerIP()
+	if err != nil {
+		return "", fmt.Errorf("erro ao obter o IP do servidor: %v", err)
+	}
+
+	portsUsed, err := GetPortsUsed()
+	if err != nil {
+		return "", fmt.Errorf("erro ao obter as portas utilizadas: %v", err)
+	}
+
+	status := map[string]interface{}{
+		"CPUUsage":    cpuPercent[0],
+		"MemoryUsage": memory.UsedPercent,
+		"TotalMemory": memory.Total,
+		"FreeMemory":  memory.Free,
+		"TotalDisk":   totalDisk,
+		"FreeDisk":    freeDisk,
+		"UsedDisk": map[string]interface{}{
+			"Size":       usedDisk,
+			"Percentage": usedPercent,
+		},
+		"ServerSize":   serverDirSize,
+		"ServerStatus": serverStatus,
+		"ServerIP":     serverIP,
+		"PortsUsed":    portsUsed,
+	}
+
+	jsonData, err := json.Marshal(status)
+	if err != nil {
+		return "", fmt.Errorf("erro ao criar o JSON de status: %v", err)
+	}
+
+	return string(jsonData), nil
+}
+
+func PrintStatus() {
+	cpuPercent, _ := cpu.Percent(time.Second, false)
+	memory, _ := mem.VirtualMemory()
+	totalDisk, freeDisk, usedDisk, usedPercent := GetDiskUsage("/")
+	serverDir := GetServerDir()
 
 	if memory.UsedPercent >= 85 {
 		fmt.Println("##### AVISO: a utilização da memória é superior a 85%")
 	}
 
-	serverDir := GetServerDir()
-	if serverDir == "" {
-		fmt.Println("Erro ao obter o diretório do servidor.")
-		return
-	}
-
-	serverDirSize, err := DirSize(serverDir)
-	if err != nil {
-		fmt.Printf("Erro ao obter o tamanho do diretório do servidor: %v\n", err)
-		return
-	}
+	serverDirSize, _ := DirSize(serverDir)
+	serverStatus, _ := GetServerStatus()
+	serverIP, _ := GetServerIP()
+	portsUsed, _ := GetPortsUsed()
 
 	fmt.Printf("\nUtilização da CPU: %.2f%%\n", cpuPercent[0])
 	fmt.Printf("Utilização da memória: %.2f%%\n\n", memory.UsedPercent)
 	fmt.Printf("Memória Total: %v MB\n", memory.Total/1024/1024)
 	fmt.Printf("Memória livre: %v MB\n", memory.Free/1024/1024)
-	fmt.Printf("Total de Disco: %v GB\n", totalGB)
-	fmt.Printf("Disco Livre: %v GB\n", freeGB)
-	fmt.Printf("Disco Usado: %v GB (%.2f%%)\n\n", usedGB, diskUsage.UsedPercent)
+	fmt.Printf("Total de Disco: %v GB\n", totalDisk/1024/1024/1024)
+	fmt.Printf("Disco Livre: %v GB\n", freeDisk/1024/1024/1024)
+	fmt.Printf("Disco Usado: %v GB (%.2f%%)\n\n", usedDisk/1024/1024/1024, usedPercent)
 
 	if serverDirSize < 1024*1024*1024 {
 		fmt.Printf("Tamanho do servidor: %v MB\n", serverDirSize/1024/1024)
@@ -93,27 +160,21 @@ func main() {
 		fmt.Printf("Tamanho do servidor: %.2f GB\n", float64(serverDirSize)/(1024*1024*1024))
 	}
 
-	cmd := exec.Command("sh", "-c", "top -b -n 1 | grep -q \"bedrock\" && echo \"Operando\" || echo \"Inativo\"")
-	output, err := cmd.Output()
-	if err != nil {
-		fmt.Println("Erro ao verificar o status do servidor")
-		return
-	}
-	fmt.Printf("Status do servidor: %s", output)
+	fmt.Printf("Status do servidor: %s\n", serverStatus)
+	fmt.Printf("IP do servidor: %s\n", serverIP)
+	fmt.Printf("Portas utilizadas:\n%s\n\n", portsUsed)
+}
 
-	cmd = exec.Command("sh", "-c", "ip route get 8.8.8.8 | awk '{print $7}'")
-	ipOutput, err := cmd.Output()
-	if err != nil {
-		fmt.Printf("Erro ao obter o IP do servidor: %v\n", err)
+func main() {
+	if len(os.Args) > 1 && os.Args[1] == "--json" {
+		jsonOutput, err := GetStatusJSON()
+		if err != nil {
+			fmt.Printf("Erro: %v\n", err)
+			return
+		}
+		fmt.Println(jsonOutput)
 		return
 	}
-	fmt.Printf("\nIP do servidor: %s\n", strings.TrimSpace(string(ipOutput)))
 
-	cmd = exec.Command("sh", "-c", `output=$(lsof -i -P -n | grep bedrock | awk '/IPv4/ {print "IPv4: " $9} /IPv6/ {print "IPv6: " $9}'); if [ -z "$output" ]; then echo "Servidor inativo"; else echo "$output"; fi`)
-	portsOutput, err := cmd.Output()
-	if err != nil {
-		fmt.Printf("Erro ao obter as portas utilizadas: %v\n", err)
-		return
-	}
-	fmt.Printf("Portas utilizadas:\n%s", string(portsOutput))
+	PrintStatus()
 }
