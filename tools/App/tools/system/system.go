@@ -1,4 +1,4 @@
-package main
+package system
 
 import (
 	"encoding/json"
@@ -163,18 +163,4 @@ func PrintStatus() {
 	fmt.Printf("Status do servidor: %s\n", serverStatus)
 	fmt.Printf("IP do servidor: %s\n", serverIP)
 	fmt.Printf("Portas utilizadas:\n%s\n\n", portsUsed)
-}
-
-func main() {
-	if len(os.Args) > 1 && os.Args[1] == "--json" {
-		jsonOutput, err := GetStatusJSON()
-		if err != nil {
-			fmt.Printf("Erro: %v\n", err)
-			return
-		}
-		fmt.Println(jsonOutput)
-		return
-	}
-
-	PrintStatus()
 }

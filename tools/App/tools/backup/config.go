@@ -1,10 +1,8 @@
-package config
+package backup
 
 import (
 	"io/ioutil"
 	"strings"
-
-	"github.com/GomdimApps/MineServerTools/tools/bedrock/backup/logger"
 )
 
 const ConfigFilePath = "/etc/mineservertools/bedrock-server.conf"
@@ -12,7 +10,7 @@ const ConfigFilePath = "/etc/mineservertools/bedrock-server.conf"
 func GetServerDir() string {
 	content, err := ioutil.ReadFile(ConfigFilePath)
 	if err != nil {
-		logger.LogError("Erro ao ler o arquivo de configuração.")
+		LogError("Erro ao ler o arquivo de configuração.")
 		return ""
 	}
 

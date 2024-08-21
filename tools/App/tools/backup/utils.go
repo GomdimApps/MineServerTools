@@ -1,4 +1,4 @@
-package utils
+package backup
 
 import (
 	"archive/tar"
@@ -11,9 +11,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/GomdimApps/MineServerTools/tools/bedrock/backup/config"
-	"github.com/GomdimApps/MineServerTools/tools/bedrock/backup/logger"
 )
 
 const BackupDir = "/var/mine-backups/backup-server-bedrock/"
@@ -25,9 +22,9 @@ type BackupInfo struct {
 }
 
 func Backup() {
-	serverDir := config.GetServerDir()
+	serverDir := GetServerDir()
 	if serverDir == "" {
-		logger.LogError("Diretório do servidor não encontrado.")
+		LogError("Diretório do servidor não encontrado.")
 		os.Exit(1)
 	}
 
@@ -36,7 +33,7 @@ func Backup() {
 	tempTar := filepath.Join(os.TempDir(), "server-mine-bedrock-temp.tar.zst")
 
 	if err := os.Chdir(BackupDir); err != nil {
-		logger.LogError("Erro ao acessar o diretório de backup.")
+		LogError("Erro ao acessar o diretório de backup.")
 		os.Exit(1)
 	}
 
@@ -45,28 +42,28 @@ func Backup() {
 	fmt.Println("Iniciando backup...")
 
 	if err := createTar(serverDir, tempTar); err != nil {
-		logger.LogError("Erro ao criar o arquivo tar.")
+		LogError("Erro ao criar o arquivo tar.")
 		os.Exit(1)
 	}
 
 	if err := os.Rename(tempTar, filepath.Join(BackupDir, fileName)); err != nil {
-		logger.LogError("Erro ao mover o arquivo de backup.")
+		LogError("Erro ao mover o arquivo de backup.")
 		os.Exit(1)
 	}
 
-	logger.LogSuccess(fmt.Sprintf("Backup concluído com sucesso: %s", fileName))
+	LogSuccess(fmt.Sprintf("Backup concluído com sucesso: %s", fileName))
 	fmt.Printf("Backup concluído com sucesso: %s\n", fileName)
 }
 
 func ViewBackup() {
 	if err := os.Chdir(BackupDir); err != nil {
-		logger.LogError("Erro ao acessar os backups.")
+		LogError("Erro ao acessar os backups.")
 		os.Exit(1)
 	}
 
 	files, err := ioutil.ReadDir(BackupDir)
 	if err != nil {
-		logger.LogError("Erro ao ler o diretório de backups.")
+		LogError("Erro ao ler o diretório de backups.")
 		os.Exit(1)
 	}
 
@@ -79,13 +76,13 @@ func ViewBackup() {
 
 func ViewBackupJson() (string, error) {
 	if err := os.Chdir(BackupDir); err != nil {
-		logger.LogError("Erro ao acessar os backups.")
+		LogError("Erro ao acessar os backups.")
 		return "", err
 	}
 
 	files, err := ioutil.ReadDir(BackupDir)
 	if err != nil {
-		logger.LogError("Erro ao ler o diretório de backups.")
+		LogError("Erro ao ler o diretório de backups.")
 		return "", err
 	}
 
@@ -104,7 +101,7 @@ func ViewBackupJson() (string, error) {
 	// Converte a lista de backups para JSON
 	jsonData, err := json.MarshalIndent(backups, "", "    ")
 	if err != nil {
-		logger.LogError("Erro ao converter os dados para JSON.")
+		LogError("Erro ao converter os dados para JSON.")
 		return "", err
 	}
 
@@ -114,7 +111,7 @@ func ViewBackupJson() (string, error) {
 func removeOldBackups() {
 	files, err := ioutil.ReadDir(BackupDir)
 	if err != nil {
-		logger.LogError("Erro ao ler o diretório de backups.")
+		LogError("Erro ao ler o diretório de backups.")
 		os.Exit(1)
 	}
 

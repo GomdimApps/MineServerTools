@@ -8,15 +8,13 @@ package-deb:
 	mkdir -p package/DEBIAN
 	mkdir -p package/usr/bin/bedrock-tools/tools
 	cp control.template package/DEBIAN/control
-	go build -o package/usr/bin/bedrock-tools/tools/update-bedrock tools/bedrock/update/*.go
-	go build -o package/usr/bin/bedrock-tools/tools/backup-bedrock tools/bedrock/backup/*.go
-	go build -o package/usr/bin/bedrock-tools/tools/info-bedrock tools/bedrock/system/system.go
+	go build -o package/usr/bin/bed-tools tools/App/*.go
+	go build -o package/usr/bin/mtools-api tools/api/*.go
 	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control
 	dpkg-deb --build package/ dist/$(PACKAGE_NAME)_$(CURRENT_VERSION_MICRO)_all.deb
 	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
-	if [ -f package/usr/bin/bedrock-tools/tools/backup-bedrock ]; then rm package/usr/bin/bedrock-tools/tools/backup-bedrock; fi
-	if [ -f package/usr/bin/bedrock-tools/tools/info-bedrock ]; then rm package/usr/bin/bedrock-tools/tools/info-bedrock; fi
-	if [ -f package/usr/bin/bedrock-tools/tools/update-bedrock ]; then rm package/usr/bin/bedrock-tools/tools/update-bedrock; fi
+	if [ -f package/usr/bin/bed-tools ]; then rm package/usr/bin/bed-tools; fi
+	if [ -f package/usr/bin/mtools-api ]; then rm package/usr/bin/mtools-api; fi
 ## Gerenciamento de versões
 
 MAKE               := make --no-print-directory
