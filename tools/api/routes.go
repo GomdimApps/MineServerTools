@@ -98,7 +98,7 @@ func SetupRoutes(r *gin.Engine) {
 }
 
 func viewBackup(c *gin.Context) {
-	cmd := exec.Command("backup-bedrock", "--view-json")
+	cmd := exec.Command("bed-tools", "--backup", "-j")
 	stdout, err := cmd.Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -118,7 +118,7 @@ func viewBackup(c *gin.Context) {
 }
 
 func viewServerStatus(c *gin.Context) {
-	cmd := exec.Command("info-bedrock", "--json")
+	cmd := exec.Command("bed-tools", "--system", "-j")
 	stdout, err := cmd.Output()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

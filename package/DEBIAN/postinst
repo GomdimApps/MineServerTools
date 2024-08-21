@@ -7,7 +7,7 @@ chgrp -R minetools /var/mine-backups/backup-server-bedrock/ /var/mine-backups/ba
 chgrp minetools /var/log/bedrock-backup.log /var/log/bedrock-update.log /var/log/java-server.log /var/log/bedrock-console.log
 chgrp minetools /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf /etc/mineservertools/mtools.conf
 chmod 771 /var/log/bedrock-backup.log /var/log/bedrock-update.log /etc/mineservertools/bedrock-server.conf /etc/mineservertools/java-edition-server.conf /etc/mineservertools/mtools.conf
-chmod 711 /usr/bin/mtools /usr/bin/bedrock-tools/tools/backup-bedrock /usr/bin/bedrock-tools/tools/info-bedrock /usr/bin/bedrock-tools/tools/update-bedrock /usr/bin/bedrock-tools/tools/console-bedrock
+chmod 711 /usr/bin/mtools /usr/bin/bed-tools /usr/bin/bedrock-tools/tools/console-bedrock /usr/bin/mtools-api
 
 dependencies=(tar wget rsync tmux unzip lsof)
 
