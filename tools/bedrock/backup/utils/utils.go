@@ -3,6 +3,7 @@ package utils
 import (
 	"archive/tar"
 	"compress/zlib"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,6 +17,12 @@ import (
 )
 
 const BackupDir = "/var/mine-backups/backup-server-bedrock/"
+
+type BackupInfo struct {
+	Name         string `json:"Name"`
+	Size         int64  `json:"Size"`
+	CreationDate string `json:"CreationDate"`
+}
 
 func Backup() {
 	serverDir := config.GetServerDir()
@@ -68,6 +75,40 @@ func ViewBackup() {
 			fmt.Printf("Nome: %s, Tamanho: %d bytes, Data de Criação: %s\n", file.Name(), file.Size(), file.ModTime().Format("2006-01-02 15:04:05"))
 		}
 	}
+}
+
+func ViewBackupJson() (string, error) {
+	if err := os.Chdir(BackupDir); err != nil {
+		logger.LogError("Erro ao acessar os backups.")
+		return "", err
+	}
+
+	files, err := ioutil.ReadDir(BackupDir)
+	if err != nil {
+		logger.LogError("Erro ao ler o diretório de backups.")
+		return "", err
+	}
+
+	var backups []BackupInfo
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".tar.zst") {
+			backup := BackupInfo{
+				Name:         file.Name(),
+				Size:         file.Size(),
+				CreationDate: file.ModTime().Format("2006-01-02 15:04:05"),
+			}
+			backups = append(backups, backup)
+		}
+	}
+
+	// Converte a lista de backups para JSON
+	jsonData, err := json.MarshalIndent(backups, "", "    ")
+	if err != nil {
+		logger.LogError("Erro ao converter os dados para JSON.")
+		return "", err
+	}
+
+	return string(jsonData), nil
 }
 
 func removeOldBackups() {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GomdimApps/MineServerTools/tools/bedrock/backup/scheduler"
@@ -21,6 +22,12 @@ func main() {
 		scheduler.ScheduleTasks()
 	case "--view":
 		utils.ViewBackup()
+	case "--view-json":
+		jsonOutput, err := utils.ViewBackupJson()
+		if err != nil {
+			log.Fatalf("Erro: %v", err)
+		}
+		fmt.Println(jsonOutput)
 	default:
 		fmt.Println("Uso: go run main.go [--backup|--schedule|--view]")
 		os.Exit(1)
