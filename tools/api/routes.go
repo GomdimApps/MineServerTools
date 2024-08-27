@@ -94,6 +94,9 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		authorized.GET("/api/server/backup-bedrock/view/", viewBackup)
 		authorized.GET("/api/server/status/view/", viewServerStatus)
+		authorized.GET("/api/server/console-bedrock/log/", viewLog)
+		authorized.POST("/api/server/backup-bedrock/task", performBackup)
+		authorized.POST("/api/server/console-bedrock/start/", startServer)
 	}
 }
 
@@ -135,4 +138,95 @@ func viewServerStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, serverInfo)
+}
+
+func viewLog(c *gin.Context) {
+	cmd := exec.Command("sh", "-c", `
+		log_file="/var/log/bedrock-console.log"; 
+		if [ -s "$log_file" ]; then 
+			tail "$log_file" | sed -e 's/^[[:space:]]*//' -e 's/"/\\\"/g' | awk '{print "{\"file\": true, \"message\":\"" $0 "\"}"}'; 
+		else 
+			echo "{\"file\": false}"; 
+		fi
+	`)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Erro ao executar o comando: %s", err.Error())})
+		return
+	}
+
+	outputStr := strings.TrimSpace(string(output))
+
+	if outputStr == "{\"file\": false}" {
+		c.JSON(http.StatusOK, gin.H{"file": false})
+		return
+	}
+
+	lines := strings.Split(outputStr, "\n")
+	var logEntries []map[string]interface{}
+
+	for _, line := range lines {
+		if line != "" {
+			var entry map[string]interface{}
+			if err := json.Unmarshal([]byte(line), &entry); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao parsear o JSON do log"})
+				return
+			}
+			logEntries = append(logEntries, entry)
+		}
+	}
+
+	c.JSON(http.StatusOK, logEntries)
+}
+
+func performBackup(c *gin.Context) {
+	cmd := exec.Command("sh", "-c", `
+		output=$(bed-tools --backup -b); 
+		if echo "$output" | grep -q "Backup concluído"; then 
+			echo '{"status": true, "message": "Seu backup foi realizado"}'; 
+		else 
+			echo '{"status": false, "message": "Erro backup"}'; 
+		fi
+	`)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Erro ao executar o comando: %s", err.Error())})
+		return
+	}
+
+	outputStr := strings.TrimSpace(string(output))
+
+	c.JSON(http.StatusOK, outputStr)
+}
+
+func startServer(c *gin.Context) {
+	cmd := exec.Command("sh", "-c", `
+		output=$(console-bedrock --start); 
+		if echo "$output" | grep -q "Iniciando o server"; then 
+			echo '{"status": 200, "message": "Server iniciado"}'; 
+		elif echo "$output" | grep -q "bedrock já foi iniciado"; then 
+			echo '{"status": 467, "message": "O server já está ligado"}'; 
+		else 
+			echo '{"status": 500, "message": "Erro ao iniciar o server"}'; 
+		fi
+	`)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Erro ao executar o comando: %s", err.Error())})
+		return
+	}
+
+	outputStr := strings.TrimSpace(string(output))
+
+	var response map[string]interface{}
+	if err := json.Unmarshal([]byte(outputStr), &response); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao parsear o JSON"})
+		return
+	}
+
+	status := int(response["status"].(float64))
+	c.JSON(status, response)
 }
