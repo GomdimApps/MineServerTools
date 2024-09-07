@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/GomdimApps/MineServerTools/tools/App/tools/backup"
-	"github.com/GomdimApps/MineServerTools/tools/App/tools/network"
-	"github.com/GomdimApps/MineServerTools/tools/App/tools/system"
+	"github.com/GomdimApps/MineServerTools/App/bin/bedrock/tools/backup"
+	"github.com/GomdimApps/MineServerTools/App/bin/bedrock/tools/network"
+	"github.com/GomdimApps/MineServerTools/App/bin/bedrock/tools/system"
 )
 
 func main() {

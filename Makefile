@@ -3,18 +3,22 @@ SHELL := /bin/bash
 
 .PHONY: package-deb
 package-deb:
-	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
 	mkdir -p dist
-	mkdir -p package/DEBIAN
-	mkdir -p package/usr/bin/bedrock-tools/tools
-	cp control.template package/DEBIAN/control
-	go build -o package/usr/bin/bed-tools tools/App/*.go
-	go build -o package/usr/bin/mtools-api tools/api/*.go
-	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" package/DEBIAN/control
-	dpkg-deb --build package/ dist/$(PACKAGE_NAME)_$(CURRENT_VERSION_MICRO)_all.deb
-	if [ -f package/DEBIAN/control ]; then rm package/DEBIAN/control; fi
-	if [ -f package/usr/bin/bed-tools ]; then rm package/usr/bin/bed-tools; fi
-	if [ -f package/usr/bin/mtools-api ]; then rm package/usr/bin/mtools-api; fi
+	mkdir -p /tmp/deb-mineservertools/usr/bin/ /tmp/deb-mineservertools/usr/lib/systemd/system /tmp/deb-mineservertools/DEBIAN
+	mkdir -p /tmp/deb-mineservertools/etc/mineservertools /tmp/deb-mineservertools/var/log /tmp/deb-mineservertools/var/mine-backups
+	cp App/debug/debian/debian.control /tmp/deb-mineservertools/DEBIAN/control
+	cp App/debug/debian/install.sh /tmp/deb-mineservertools/DEBIAN/postinst
+	cp App/bin/bedrock/systemd/* /tmp/deb-mineservertools/usr/lib/systemd/system/
+	cp App/bin/bedrock/shell/* /tmp/deb-mineservertools/usr/bin/
+	cp App/bin/bedrock/logs/* /tmp/deb-mineservertools/var/log/
+	cp App/bin/bedrock/confs/* /tmp/deb-mineservertools/etc/mineservertools/
+	go build -o /tmp/deb-mineservertools/usr/bin/bed-tools App/bin/bedrock/*.go
+	go build -o /tmp/deb-mineservertools/usr/bin/mtools-api App/bin/api/*.go
+	sed -i "s/x.y.z/$(CURRENT_VERSION_MICRO)/" /tmp/deb-mineservertools/DEBIAN/control
+	dpkg-deb --build /tmp/deb-mineservertools/ dist/$(PACKAGE_NAME)_$(CURRENT_VERSION_MICRO)_all.deb
+	[ -d "/tmp/deb-mineservertools/" ] && rm -rf "/tmp/deb-mineservertools/"
+	clear ; echo "Pacote DEBIAN criado com sucessso!"
+
 ## Gerenciamento de versões
 
 MAKE               := make --no-print-directory

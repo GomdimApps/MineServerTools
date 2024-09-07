@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GomdimApps/MineServerTools/tools/api/utils"
+	"github.com/GomdimApps/MineServerTools/App/bin/api/utils"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 )

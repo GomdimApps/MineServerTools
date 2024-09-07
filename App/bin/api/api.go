@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/GomdimApps/MineServerTools/tools/api/utils"
+	"github.com/GomdimApps/MineServerTools/App/bin/api/utils"
 	"github.com/gin-gonic/gin"
 )
 

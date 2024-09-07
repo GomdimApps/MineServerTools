@@ -8,5 +8,3 @@ Description: Description: Ferramentas essenciais para manter um servidor Minecra
  Inclui suporte para reinicialização automática, backups regulares, e monitoramento
  de desempenho.
 Depends: tar, wget, rsync, tmux, unzip, lsof, dialog
-
-
